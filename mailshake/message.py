@@ -19,9 +19,8 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-from shake import to_unicode, to_bytestring
-
-from .utils import DNS_NAME, sanitize_address, make_msgid
+from .utils import (DNS_NAME, sanitize_address, make_msgid,
+    to_unicode, to_bytestring)
 
 
 # Don't BASE64-encode UTF-8 messages so that we avoid unwanted attention from
