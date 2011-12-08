@@ -1,5 +1,5 @@
-include *.txt *.py
-recursive-include shake_mail *
+include *.txt *.md *.py
+recursive-include shake_auth *
 recursive-include docs *
 global-exclude shake *.pyc *.pyo
 prune docs/_build
