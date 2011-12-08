@@ -19,9 +19,10 @@ setup(
     author='Juan-Pablo Scaletti',
     author_email='juanpablo@lucumalabs.com',
     packages=['mailshake'],
-    package_data={'mailshake': [
+    package_data={'': [
         '*.*',
-        'mailers/*.*',
+        'mailshake/*.*',
+        'mailshake/mailers/*.*',
         'tests/*.*',
         'docs/*.*',
     ]},
