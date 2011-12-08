@@ -26,7 +26,8 @@ Severals other mailers are available for testing: `ToConsoleMailer`, `ToFileMail
 
 --------
 
-Much of the code was based on the mail backends of Django (http://djangoproject.com). The original code was BSD licensed.
+Much of the code was based on the mail backends of Django (http://djangoproject.com).<br>
+The original code was BSD licensed. See `LEGAL.md` for mor details.
 
 Copyright © 2010-2011 by Lúcuma labs (http://lucumalabs.com).<br>
 MIT License. (http://www.opensource.org/licenses/mit-license.php)
