@@ -15,7 +15,7 @@ def run_tests():
 
 setup(
     name='MailShake',
-    version='0.3',
+    version='0.4',
     author='Juan-Pablo Scaletti',
     author_email='juanpablo@lucumalabs.com',
     packages=['mailshake'],
@@ -29,7 +29,7 @@ setup(
     zip_safe=False,
     url='http://github.com/lucuma/MailShake',
     license='MIT license (http://www.opensource.org/licenses/mit-license.php)',
-    description='Wrappers to sending emails (or testing it) from your Shake app.',
+    description='Send emails from your Shake app.',
     long_description=open(README).read(),
     include_package_data=True,
     install_requires=[

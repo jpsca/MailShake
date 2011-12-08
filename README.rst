@@ -3,12 +3,9 @@
 MailShake
 =================
 
-Although Python makes sending email relatively easy via the smtplib module,
-this bundle provides a couple of light wrappers over it.
+Although Python makes sending email relatively easy via the smtplib module, this bundle provides a couple of light wrappers over it.
 
-These wrappers are provided to make sending email extra quick, to make it
-easy to test email sending during development, and to provide support for
-platforms that can’t use SMTP.
+These wrappers are provided to make sending email extra quick, to make it easy to test email sending during development, and to provide support for platforms that can’t use SMTP.
 
 Usage::
 
@@ -27,7 +24,8 @@ Usage::
     mailer.send(email_msg)
 
 
-Severals other mailers are available for testing: `ToConsoleMailer`,
-`DummyMailer` (does nothing), `ToFileMailer` and `ToMemoryMailer`.
+Severals other mailers are available for testing: `ToConsoleMailer`, `ToFileMailer`, `ToMemoryMailer` and `DummyMailer` (does nothing).
 
 
+-------------------
+Much of the code was based on the mail code from Django (http://djangoproject.com). The original code was BSD licensed
