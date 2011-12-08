@@ -32,7 +32,7 @@
 
     - LEGAL -------------------------------------------------------------------
 
-    Much of the code was originally based on the mail code from Django
+    Much of the code was based on the mail backends of Django
     (http://djangoproject.com). The original code was BSD licensed:
 
         Copyright (c) Django Software Foundation and individual contributors.

@@ -15,7 +15,7 @@ def run_tests():
 
 setup(
     name='MailShake',
-    version='0.4',
+    version='0.5',
     author='Juan-Pablo Scaletti',
     author_email='juanpablo@lucumalabs.com',
     packages=['mailshake'],

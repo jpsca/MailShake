@@ -27,5 +27,4 @@ Usage::
 Severals other mailers are available for testing: `ToConsoleMailer`, `ToFileMailer`, `ToMemoryMailer` and `DummyMailer` (does nothing).
 
 
--------------------
-Much of the code was based on the mail code from Django (http://djangoproject.com). The original code was BSD licensed
+Much of the code was based on the the mail backends of Django (http://djangoproject.com). The original code was BSD licensed.
