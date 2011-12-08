@@ -2,4 +2,4 @@ include *.*
 recursive-include mailshake *
 recursive-include tests *
 recursive-include docs *
-global-exclude shake *.pyc *.pyo
+global-exclude shake .DS_Store *.pyc *.pyo __pycache__
