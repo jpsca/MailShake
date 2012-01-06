@@ -46,3 +46,4 @@ from .message import EmailMessage
 
 Mailer = ToConsoleMailer
 
+__version__ = '0.7'
