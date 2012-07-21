@@ -17,7 +17,7 @@ class SMTPMailer(BaseMailer):
     """A wrapper that manages the SMTP network connection.
     """
 
-    def __init__(self, host='localhost', port=25, username=None, password=None,
+    def __init__(self, host='localhost', port=587, username=None, password=None,
             use_tls=True, fail_silently=False, *args, **kwargs):
         super(SMTPMailer, self).__init__(fail_silently=fail_silently)
         self.host = host

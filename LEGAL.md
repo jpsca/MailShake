@@ -6,7 +6,7 @@ MIT License. (http://www.opensource.org/licenses/mit-license.php)
 
 ## Other copyright notices
 
-Much of the code was based on the mail backends of Django (http://djangoproject.com).<br>
+Originally derived from the mail backends of Django (http://djangoproject.com).<br>
 The original code was BSD licensed:
 
     Copyright (c) Django Software Foundation and individual contributors.
