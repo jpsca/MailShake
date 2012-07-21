@@ -180,3 +180,42 @@ def to_bytestring(s, encoding='utf-8', strings_only=False, errors='strict'):
     else:
         return s
 
+
+# Header names that contain structured address data (RFC #5322)
+ADDRESS_HEADERS = set([
+    'from',
+    'sender',
+    'reply-to',
+    'to',
+    'cc',
+    'bcc',
+    'resent-from',
+    'resent-sender',
+    'resent-to',
+    'resent-cc',
+    'resent-bcc',
+])
+
+
+def forbid_multi_line_headers(name, val, encoding='utf-8'):
+    """Forbids multi-line headers, to prevent header injection.
+    """
+    val = to_unicode(val)
+    if '\n' in val or '\r' in val:
+        raise ValueError("Header values can't contain newlines' \
+            ' (got %r for header %r)" % (val, name))
+    try:
+        val = val.encode('ascii')
+    except UnicodeEncodeError:
+        if name.lower() in ADDRESS_HEADERS:
+            val = ', '.join(sanitize_address(addr, encoding)
+                for addr in getaddresses((val,)))
+        else:
+            val = str(Header(val, encoding))
+    else:
+        if name.lower() == 'subject':
+            val = Header(val)
+    return name, val
+
+
+
