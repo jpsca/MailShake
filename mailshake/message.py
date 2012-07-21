@@ -10,7 +10,6 @@ from email.generator import Generator
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
-from email.header import Header
 from email.utils import formatdate, getaddresses, parseaddr
 import mimetypes
 import os
@@ -19,8 +18,7 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-from .utils import (DNS_NAME, sanitize_address, make_msgid,
-    to_unicode, to_bytestring)
+from .utils import forbid_multi_line_headers, make_msgid, to_bytestring
 
 
 # Don't BASE64-encode UTF-8 messages so that we avoid unwanted attention from
@@ -30,21 +28,6 @@ Charset.add_charset('utf-8', Charset.SHORTEST, None, 'utf-8')
 # Default MIME type to use on attachments (if it is not explicitly given
 # and cannot be guessed).
 DEFAULT_ATTACHMENT_MIME_TYPE = 'application/octet-stream'
-
-# Header names that contain structured address data (RFC #5322)
-ADDRESS_HEADERS = set([
-    'from',
-    'sender',
-    'reply-to',
-    'to',
-    'cc',
-    'bcc',
-    'resent-from',
-    'resent-sender',
-    'resent-to',
-    'resent-cc',
-    'resent-bcc',
-])
 
 
 class EmailMessage(object):
@@ -248,25 +231,4 @@ class SafeMIMEMultipart(MIMEMultipart):
         g = Generator(fp, mangle_from_ = False)
         g.flatten(self, unixfrom=unixfrom)
         return fp.getvalue()
-
-
-def forbid_multi_line_headers(name, val, encoding='utf-8'):
-    """Forbids multi-line headers, to prevent header injection.
-    """
-    val = to_unicode(val)
-    if '\n' in val or '\r' in val:
-        raise ValueError("Header values can't contain newlines' \
-            ' (got %r for header %r)" % (val, name))
-    try:
-        val = val.encode('ascii')
-    except UnicodeEncodeError:
-        if name.lower() in ADDRESS_HEADERS:
-            val = ', '.join(sanitize_address(addr, encoding)
-                for addr in getaddresses((val,)))
-        else:
-            val = str(Header(val, encoding))
-    else:
-        if name.lower() == 'subject':
-            val = Header(val)
-    return name, val
 
