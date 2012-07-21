@@ -10,7 +10,7 @@ from email.generator import Generator
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
-from email.utils import formatdate, getaddresses, parseaddr
+from email.utils import formatdate
 import mimetypes
 import os
 try:
