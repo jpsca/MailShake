@@ -8,7 +8,7 @@
 import datetime
 from decimal import Decimal
 from email.header import Header
-from email.utils import formataddr, parseaddr
+from email.utils import formataddr, parseaddr, getaddresses
 import os
 import random
 import socket
