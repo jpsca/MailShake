@@ -5,12 +5,15 @@
     Email sending related helper functions.
 
 """
+import datetime
+from decimal import Decimal
 from email.header import Header
 from email.utils import formataddr, parseaddr
 import os
 import random
 import socket
 import time
+import types
 
 
 class CachedDnsName(object):
@@ -77,17 +80,36 @@ def make_msgid(idstring=None):
     return msgid
 
 
+def is_protected_type(obj):
+    """Determine if the object instance is of a protected type.
+
+    Objects of protected types are preserved as-is when passed to
+    force_unicode(strings_only=True).
+    """
+    return isinstance(obj, (
+        types.NoneType,
+        int, long,
+        datetime.datetime, datetime.date, datetime.time,
+        float, Decimal)
+    )
+
+
 def to_unicode(s, encoding='utf-8', strings_only=False, errors='strict'):
     """Returns a unicode object representing 's'. Treats bytestrings using the
     `encoding` codec.
 
     If strings_only is True, don't convert (some) non-string-like objects.
+
+    --------------------------------
+    Copied almost unchanged from Django <https://www.djangoproject.com/>
+    Copyright © Django Software Foundation and individual contributors.
+    Used under the modified BSD license.
     """
     # Handle the common case first, saves 30-40% in performance when s
     # is an instance of unicode.
     if isinstance(s, unicode):
         return s
-    if strings_only and isinstance(s, PROTECTED_TYPES):
+    if strings_only and is_protected_type(s):
         return s
     encoding = encoding or 'utf-8'
     try:
@@ -131,6 +153,11 @@ def to_bytestring(s, encoding='utf-8', strings_only=False, errors='strict'):
     """Returns a bytestring version of 's', encoded as specified in 'encoding'.
 
     If strings_only is True, don't convert (some) non-string-like objects.
+
+    --------------------------------
+    Copied almost unchanged from Django <https://www.djangoproject.com/>
+    Copyright © Django Software Foundation and individual contributors.
+    Used under the modified BSD license.
     """
     if strings_only and isinstance(s, (types.NoneType, int)):
         return s
