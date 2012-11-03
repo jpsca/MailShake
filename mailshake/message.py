@@ -75,11 +75,18 @@ class EmailMessage(object):
         msg = self._create_message()
         msg['Subject'] = self.subject
         msg['From'] = self.extra_headers.get('From', self.from_email)
-        msg['To'] = ', '.join(self.to)
+
+        if not self.get_recipients():
+            # TODO:
+            # No logger has been included, so in this case just let the email
+            # fail during sending.
+            pass
+
+        if self.to:
+            msg['To'] = ', '.join(self.to)
+
         if self.cc:
             msg['Cc'] = ', '.join(self.cc)
-        if self.bcc:
-            msg['Bcc'] = ', '.join(self.bcc)
 
         # Email header names are case-insensitive (RFC 2045), so we have to
         # accommodate that when doing comparisons.
