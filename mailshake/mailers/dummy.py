@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    # mailshake.mailers.dummy
-
     Dummy mailer that does nothing.
-
 """
 from .base import BaseMailer
 

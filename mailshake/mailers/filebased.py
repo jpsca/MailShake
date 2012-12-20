@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+    Mailer that writes messages to a file.
+"""
 import datetime
 import errno
 import os

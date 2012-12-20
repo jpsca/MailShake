@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    # mailshake.mailers.smtp
-
-    SMTP mailer class.
-
+    SMTP mailer.
 """
 import smtplib
 import socket

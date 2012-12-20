@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    # mailshake.mailers.console
-
     Mailer that writes messages to console instead of sending them.
-
 """
 import sys
 import threading

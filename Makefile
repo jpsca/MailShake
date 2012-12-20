@@ -15,7 +15,6 @@ clean-pyc:
 	find . -name '*~' -exec rm -f {} \;
 
 test:
-	rm -rf tests/res/t
 	python runtests.py tests
 	rm -rf tests/__pycache__
 

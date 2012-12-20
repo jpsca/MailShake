@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-    # mailshake.mailers.base
-
-    Base mailer class.
-
-"""
 
 
 class BaseMailer(object):

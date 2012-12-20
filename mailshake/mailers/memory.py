@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    # mailshake.mailers.memory
-
     Mailer for testing.
-
 """
 from .base import BaseMailer
 

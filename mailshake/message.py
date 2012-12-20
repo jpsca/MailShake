@@ -71,9 +71,6 @@ class EmailMessage(object):
         msg['From'] = self.extra_headers.get('From', self.from_email)
 
         if not self.get_recipients():
-            # TODO:
-            # No logger has been included, so in this case just let the email
-            # fail during sending.
             pass
 
         if self.to:
