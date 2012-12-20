@@ -6,6 +6,7 @@
 
 """
 
+
 class BaseMailer(object):
     """Base class for mailers implementations.
 

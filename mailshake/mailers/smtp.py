@@ -18,8 +18,7 @@ class SMTPMailer(BaseMailer):
     """
 
     def __init__(self, host='localhost', port=587, username=None, password=None,
-            use_tls=True, fail_silently=False, *args, **kwargs):
-        super(SMTPMailer, self).__init__(fail_silently=fail_silently)
+            use_tls=True, *args, **kwargs):
         self.host = host
         self.port = port
         self.username = username
@@ -27,6 +26,7 @@ class SMTPMailer(BaseMailer):
         self.use_tls = bool(use_tls)
         self.connection = None
         self._lock = threading.RLock()
+        super(SMTPMailer, self).__init__(*args, **kwargs)
 
     def open(self):
         """Ensures we have a connection to the email server. Returns whether or

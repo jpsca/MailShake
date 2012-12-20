@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-    # mailshake.message
-
-    A container for email information.
-
-"""
 from email import charset as Charset, encoders as Encoders
 from email.generator import Generator
 from email.mime.text import MIMEText

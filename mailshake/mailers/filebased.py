@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-    # mailshake.mailers.filebased
-
-    Mailer that writes messages to a file.
-
-"""
 import datetime
 import errno
 import os

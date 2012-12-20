@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-    # mailshake.utils
-
-    Email sending related helper functions.
-
-"""
 import datetime
 from decimal import Decimal
 from email.header import Header

@@ -18,8 +18,7 @@
             'Here's a photo of us from our Europe trip.',
             'from@example.com',
             ['mary@example.com', 'bob@example.com'],
-            
-            )
+        )
         email_msg.attach("picture.jpg")
         
         mailer = Mailer()
@@ -30,7 +29,6 @@
     `DummyMailer` (does nothing), `ToFileMailer` and `ToMemoryMailer`.
     
     
-    Copyright © 2010-2011 by Lúcuma labs (http://lucumalabs.com).
     MIT License. (http://www.opensource.org/licenses/mit-license.php).
     See `LEGAL.md` for more details.
 
@@ -46,4 +44,4 @@ from .message import EmailMessage
 
 Mailer = ToConsoleMailer
 
-__version__ = '0.8.3'
+__version__ = '0.8.4'

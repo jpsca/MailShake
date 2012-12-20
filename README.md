@@ -13,8 +13,7 @@ Usage:
         'Here's a photo of us from our Europe trip.',
         'from@example.com',
         ['mary@example.com', 'bob@example.com'],
-        
-        )
+    )
     email_msg.attach("picture.jpg")
     
     mailer = Mailer()
@@ -25,8 +24,8 @@ Severals other mailers are available for testing: `ToConsoleMailer`, `ToFileMail
 
 --------
 
-Originally derived from the mail backends of Django (http://djangoproject.com)>
-The original code was BSD licensed. See `LEGAL.md` for more details.
-
-Copyright © 2010-2011 by Lúcuma labs (http://lucumalabs.com).<br>
+© by Lúcuma labs (http://lucumalabs.com).
 MIT License. (http://www.opensource.org/licenses/mit-license.php)
+
+Extracted from the mail backends of Django (http://djangoproject.com)
+The original code was BSD licensed. See `LEGAL.md` for more details.
