@@ -6,5 +6,6 @@ dist
 *.egg*
 
 .coverage
+.tox
 htmlcov
 __pycache__
