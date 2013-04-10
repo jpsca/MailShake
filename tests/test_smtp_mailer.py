@@ -99,9 +99,9 @@ def test_sending():
     mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=False)
     email1, email2, email3, email4 = make_emails()
 
-    assert mailer.send(email1) == 1
-    assert mailer.send(email2, email3) == 2
-    assert mailer.send(email4) == 1
+    assert mailer.send_messages(email1) == 1
+    assert mailer.send_messages(email2, email3) == 2
+    assert mailer.send_messages(email4) == 1
 
     sink = server.get_sink()
     assert len(sink) == 4

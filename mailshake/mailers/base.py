@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+from ..message import EmailMessage
 
 
 class BaseMailer(object):
     """Base class for mailers implementations.
 
-    Subclasses must at least overwrite send().
+    Subclasses must at least overwrite send_messages().
     """
 
     def __init__(self, default_from=None, fail_silently=False, *args, **kwargs):
@@ -36,7 +37,10 @@ class BaseMailer(object):
         """
         pass
 
-    def send(self, **email_messages):
+    def send(self, *args, **kwargs):
+        return self.send_messages(EmailMessage(*args, **kwargs))
+
+    def send_messages(self, *email_messages):
         """Sends one or more `EmailMessage` objects and returns the number of
         email messages sent.
         """

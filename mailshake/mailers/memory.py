@@ -13,12 +13,14 @@ class ToMemoryMailer(BaseMailer):
 
     The dummy outbox is accessible through the outbox instance attribute.
     """
+
     def __init__(self, *args, **kwargs):
         self.outbox = []
         super(ToMemoryMailer, self).__init__(*args, **kwargs)
     
-    def send(self, *email_messages):
-        """Redirect messages to the dummy outbox"""
+    def send_messages(self, *email_messages):
+        """Redirect messages to the dummy outbox.
+        """
         self.outbox.extend(email_messages)
         return len(email_messages)
 

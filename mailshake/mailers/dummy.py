@@ -7,6 +7,6 @@ from .base import BaseMailer
 
 class DummyMailer(BaseMailer):
 
-    def send(self, *email_messages):
+    def send_messages(self, *email_messages):
         return len(email_messages)
 

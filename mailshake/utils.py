@@ -95,7 +95,7 @@ def to_unicode(s, encoding='utf-8', strings_only=False, errors='strict'):
     If strings_only is True, don't convert (some) non-string-like objects.
 
     --------------------------------
-    Copied almost unchanged from Django <https://www.djangoproject.com/>
+    Copied almost verbatim from Django <https://www.djangoproject.com/>
     Copyright © Django Software Foundation and individual contributors.
     Used under the modified BSD license.
     """
@@ -149,7 +149,7 @@ def to_bytestring(s, encoding='utf-8', strings_only=False, errors='strict'):
     If strings_only is True, don't convert (some) non-string-like objects.
 
     --------------------------------
-    Copied almost unchanged from Django <https://www.djangoproject.com/>
+    Copied almost verbatim from Django <https://www.djangoproject.com/>
     Copyright © Django Software Foundation and individual contributors.
     Used under the modified BSD license.
     """

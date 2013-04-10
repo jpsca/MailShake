@@ -42,13 +42,15 @@ class SMTPMailer(BaseMailer):
                 self.connection.ehlo()
             if self.username and self.password:
                 self.connection.login(self.username, self.password)
-            return True
         except:
             if not self.fail_silently:
                 raise
+        return True
+            
 
     def close(self):
-        """Closes the connection to the email server."""
+        """Closes the connection to the email server.
+        """
         try:
             try:
                 self.connection.quit()
@@ -63,9 +65,8 @@ class SMTPMailer(BaseMailer):
         finally:
             self.connection = None
 
-    def send(self, *email_messages):
-        """
-        Sends one or more EmailMessage objects and returns the number of email
+    def send_messages(self, *email_messages):
+        """Sends one or more EmailMessage objects and returns the number of
         messages sent.
         """
         if not email_messages:
@@ -89,7 +90,8 @@ class SMTPMailer(BaseMailer):
         return num_sent
 
     def _send(self, email_message):
-        """A helper method that does the actual sending."""
+        """A helper method that does the actual sending.
+        """
         recipients = email_message.get_recipients()
         if not recipients:
             return False

@@ -15,7 +15,7 @@ class ToConsoleMailer(BaseMailer):
         self._lock = threading.RLock()
         super(ToConsoleMailer, self).__init__(*args, **kwargs)
 
-    def send(self, *email_messages):
+    def send_messages(self, *email_messages):
         """Write all messages to the stream in a thread-safe way.
         """
         if not email_messages:

@@ -4,3 +4,7 @@
 build
 dist
 *.egg*
+
+.coverage
+htmlcov
+__pycache__

@@ -30,7 +30,6 @@
     
     
     MIT License. (http://www.opensource.org/licenses/mit-license.php).
-    See `LEGAL.md` for more details.
 
 """
 from .mailers.console import ToConsoleMailer
@@ -44,4 +43,4 @@ from .message import EmailMessage
 
 Mailer = ToConsoleMailer
 
-__version__ = '0.8.5'
+__version__ = '0.9'
