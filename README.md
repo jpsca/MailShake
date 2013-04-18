@@ -1,4 +1,6 @@
 # MailShake
+
+[![Build Status](https://travis-ci.org/lucuma/MailShake.png)](https://travis-ci.org/lucuma/MailShake)
     
 Although Python makes sending email relatively easy via the smtplib module, this bundle provides a couple of light wrappers over it.
 
