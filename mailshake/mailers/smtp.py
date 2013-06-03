@@ -15,7 +15,7 @@ class SMTPMailer(BaseMailer):
     """
 
     def __init__(self, host='localhost', port=587, username=None, password=None,
-            use_tls=True, *args, **kwargs):
+                 use_tls=True, *args, **kwargs):
         self.host = host
         self.port = port
         self.username = username
@@ -35,7 +35,7 @@ class SMTPMailer(BaseMailer):
         try:
             # For performance, we use the cached FQDN for local_hostname.
             self.connection = smtplib.SMTP(self.host, self.port,
-                local_hostname=DNS_NAME.get_fqdn())
+                                           local_hostname=DNS_NAME.get_fqdn())
             if self.use_tls:
                 self.connection.ehlo()
                 self.connection.starttls()
@@ -46,7 +46,6 @@ class SMTPMailer(BaseMailer):
             if not self.fail_silently:
                 raise
         return True
-            
 
     def close(self):
         """Closes the connection to the email server.
@@ -97,14 +96,14 @@ class SMTPMailer(BaseMailer):
             return False
         from_email = email_message.from_email or self.default_from
         from_email = sanitize_address(from_email, email_message.encoding)
-        recipients = [sanitize_address(addr, email_message.encoding)
+        recipients = [
+            sanitize_address(addr, email_message.encoding)
             for addr in recipients]
         try:
             self.connection.sendmail(from_email, recipients,
-                email_message.as_string())
+                                     email_message.as_string())
         except:
             if not self.fail_silently:
                 raise
             return False
         return True
-

@@ -6,26 +6,26 @@ import datetime
 import errno
 import os
 
-from .base import BaseMailer
 from .console import ToConsoleMailer
+from ..utils import string_types
 
 
 class ToFileMailer(ToConsoleMailer):
 
     def __init__(self, path, multifile=True, *args, **kwargs):
-        assert isinstance(path, basestring)
+        assert isinstance(path, string_types)
         path = os.path.abspath(path)
         if os.path.isfile(path):
             path = os.path.dirname(path)
-        
+
         # Try to create it, if it not exists.
         try:
             os.makedirs(path)
-        except (OSError), e:
+        except OSError as e:
             if e.errno != errno.EEXIST:
                 raise ValueError('Could not create directory for saving email'
-                    ' messages: %s (%s)' % (path, err))
-        
+                                 ' messages: %s (%s)' % (path, e))
+
         # Make sure that `path` exists and is writable.
         assert os.path.isdir(path)
         assert os.access(path, os.W_OK)
@@ -65,4 +65,3 @@ class ToFileMailer(ToConsoleMailer):
             self.stream = None
             if self.multifile:
                 self._fname = None
-

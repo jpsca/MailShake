@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-import datetime
-from decimal import Decimal
 from email.header import Header
 from email.utils import formataddr, parseaddr, getaddresses
 import os
 import random
 import socket
 import time
-import types
+
+from .compat import string_types, to_unicode
 
 
 class CachedDnsName(object):
@@ -27,7 +26,7 @@ DNS_NAME = CachedDnsName()
 
 
 def sanitize_address(addr, encoding):
-    if isinstance(addr, basestring):
+    if isinstance(addr, string_types):
         addr = parseaddr(to_unicode(addr))
     nm, addr = addr
     nm = str(Header(nm, encoding))
@@ -51,18 +50,12 @@ def make_msgid(idstring=None):
 
     Optional idstring if given is a string used to strengthen the
     uniqueness of the message id.
-
-    --------------------------------
-    Copied from Python standard library, with the following modifications:
-    * Used cached hostname for performance.
-    * Added try/except to support lack of getpid() in Jython (#5496).
     """
     timeval = time.time()
     utcdate = time.strftime('%Y%m%d%H%M%S', time.gmtime(timeval))
     try:
         pid = os.getpid()
     except AttributeError:
-        # No getpid() in Jython, for example.
         pid = 1
     randint = random.randrange(100000)
     if idstring is None:
@@ -72,107 +65,6 @@ def make_msgid(idstring=None):
     idhost = DNS_NAME
     msgid = '<%s.%s.%s%s@%s>' % (utcdate, pid, randint, idstring, idhost)
     return msgid
-
-
-def is_protected_type(obj):
-    """Determine if the object instance is of a protected type.
-
-    Objects of protected types are preserved as-is when passed to
-    force_unicode(strings_only=True).
-    """
-    return isinstance(obj, (
-        types.NoneType,
-        int, long,
-        datetime.datetime, datetime.date, datetime.time,
-        float, Decimal)
-    )
-
-
-def to_unicode(s, encoding='utf-8', strings_only=False, errors='strict'):
-    """Returns a unicode object representing 's'. Treats bytestrings using the
-    `encoding` codec.
-
-    If strings_only is True, don't convert (some) non-string-like objects.
-
-    --------------------------------
-    Copied almost verbatim from Django <https://www.djangoproject.com/>
-    Copyright © Django Software Foundation and individual contributors.
-    Used under the modified BSD license.
-    """
-    # Handle the common case first, saves 30-40% in performance when s
-    # is an instance of unicode.
-    if isinstance(s, unicode):
-        return s
-    if strings_only and is_protected_type(s):
-        return s
-    encoding = encoding or 'utf-8'
-    try:
-        if not isinstance(s, basestring):
-            if hasattr(s, '__unicode__'):
-                s = unicode(s)
-            else:
-                try:
-                    s = unicode(str(s), encoding, errors)
-                except UnicodeEncodeError:
-                    if not isinstance(s, Exception):
-                        raise
-                    # If we get to here, the caller has passed in an Exception
-                    # subclass populated with non-ASCII data without special
-                    # handling to display as a string. We need to handle this
-                    # without raising a further exception. We do an
-                    # approximation to what the Exception's standard str()
-                    # output should be.
-                    s = u' '.join([to_unicode(arg, encoding, strings_only,
-                        errors) for arg in s])
-        elif not isinstance(s, unicode):
-            # Note: We use .decode() here, instead of unicode(s, encoding,
-            # errors), so that if s is a SafeString, it ends up being a
-            # SafeUnicode at the end.
-            s = s.decode(encoding, errors)
-    except UnicodeDecodeError, e:
-        if not isinstance(s, Exception):
-            raise UnicodeDecodeError(s, *e.args)
-        else:
-            # If we get to here, the caller has passed in an Exception
-            # subclass populated with non-ASCII bytestring data without a
-            # working unicode method. Try to handle this without raising a
-            # further exception by individually forcing the exception args
-            # to unicode.
-            s = u' '.join([to_unicode(arg, encoding, strings_only,
-                errors) for arg in s])
-    return s
-
-
-def to_bytestring(s, encoding='utf-8', strings_only=False, errors='strict'):
-    """Returns a bytestring version of 's', encoded as specified in 'encoding'.
-
-    If strings_only is True, don't convert (some) non-string-like objects.
-
-    --------------------------------
-    Copied almost verbatim from Django <https://www.djangoproject.com/>
-    Copyright © Django Software Foundation and individual contributors.
-    Used under the modified BSD license.
-    """
-    if strings_only and isinstance(s, (types.NoneType, int)):
-        return s
-    encoding = encoding or 'utf-8'
-    if not isinstance(s, basestring):
-        try:
-            return str(s)
-        except UnicodeEncodeError:
-            if isinstance(s, Exception):
-                # An Exception subclass containing non-ASCII data that doesn't
-                # know how to print itself properly. We shouldn't raise a
-                # further exception.
-                return ' '.join([to_bytestring(arg, encoding, strings_only,
-                    errors) for arg in s])
-            return unicode(s).encode(encoding, errors)
-    elif isinstance(s, unicode):
-        return s.encode(encoding, errors)
-    elif s and encoding != 'utf-8':
-        return s.decode('utf-8', errors).encode(encoding, errors)
-    else:
-        return s
 
 
 # Header names that contain structured address data (RFC #5322)
@@ -202,14 +94,13 @@ def forbid_multi_line_headers(name, val, encoding='utf-8'):
         val = val.encode('ascii')
     except UnicodeEncodeError:
         if name.lower() in ADDRESS_HEADERS:
-            val = ', '.join(sanitize_address(addr, encoding)
-                for addr in getaddresses((val,)))
+            val = ', '.join([
+                sanitize_address(addr, encoding)
+                for addr in getaddresses((val,))
+            ])
         else:
             val = str(Header(val, encoding))
     else:
         if name.lower() == 'subject':
             val = Header(val)
     return name, val
-
-
-

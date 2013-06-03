@@ -28,7 +28,7 @@ def get_version():
 
 
 def find_package_data(root, include_files=None):
-    include_files = include_files or ['.gitignore',]
+    include_files = include_files or ['.gitignore', ]
     files = []
     src_root = get_path(root).rstrip('/') + '/'
     for dirpath, subdirs, filenames in os.walk(src_root):
@@ -72,19 +72,19 @@ class PyTest(TestCommand):
 
 
 setup(
-    name = 'MailShake',
-    version = get_version(),
-    author = 'Juan-Pablo Scaletti',
-    author_email = 'juanpablo@lucumalabs.com',
-    packages = [PACKAGE],
-    package_data = find_packages_data(PACKAGE, 'tests'),
-    zip_safe = False,
-    url = 'http://github.com/lucuma/MailShake',
-    license = 'MIT license (http://www.opensource.org/licenses/mit-license.php)',
-    description = 'Wrappers to sending emails (or testing it) from your Python app',
-    long_description = read_from(get_path('README.rst')),
-    install_requires = get_requirements(),
-    classifiers = [
+    name='MailShake',
+    version=get_version(),
+    author='Juan-Pablo Scaletti',
+    author_email='juanpablo@lucumalabs.com',
+    packages=[PACKAGE],
+    package_data=find_packages_data(PACKAGE, 'tests'),
+    zip_safe=False,
+    url='http://github.com/lucuma/MailShake',
+    license='MIT license (http://www.opensource.org/licenses/mit-license.php)',
+    description='Wrappers to sending emails (or testing it) from your Python app',
+    long_description=read_from(get_path('README.rst')),
+    install_requires=get_requirements(),
+    classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
@@ -94,7 +94,6 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
-    tests_require = ['pytest'],
-    cmdclass = {'test': PyTest},
+    tests_require=['pytest'],
+    cmdclass={'test': PyTest},
 )
-

@@ -1,23 +1,22 @@
 # -*- coding: utf-8 -*-
-"""
-    SMTPMailer tests.
-"""
+from __future__ import print_function
 import asyncore
-from datetime import datetime
 import email
 import smtpd
 from smtplib import SMTPException
 import threading
 
-import mailshake
 from mailshake import EmailMessage
 from mailshake.mailers.smtp import SMTPMailer
 import pytest
 
 
 def make_emails():
-    return [EmailMessage('Subject-%s' % num, 'Content',
-        'from@example.com', 'to@example.com') for num in range(1, 5)]
+    return [
+        EmailMessage('Subject-%s' % num, 'Content',
+                     'from@example.com', 'to@example.com')
+        for num in range(1, 5)
+    ]
 
 
 class FakeSMTPServer(smtpd.SMTPServer, threading.Thread):
@@ -33,7 +32,7 @@ class FakeSMTPServer(smtpd.SMTPServer, threading.Thread):
         self.active = False
         self.active_lock = threading.Lock()
         self.sink_lock = threading.Lock()
-    
+
     def process_message(self, peer, mailfrom, rcpttos, data):
         m = email.message_from_string(data)
         maddr = email.Utils.parseaddr(m.get('from'))[1]
@@ -42,25 +41,25 @@ class FakeSMTPServer(smtpd.SMTPServer, threading.Thread):
         self.sink_lock.acquire()
         self._sink.append(m)
         self.sink_lock.release()
-    
+
     def get_sink(self):
         self.sink_lock.acquire()
         try:
             return self._sink[:]
         finally:
             self.sink_lock.release()
-    
+
     def flush_sink(self):
         self.sink_lock.acquire()
         self._sink[:] = []
         self.sink_lock.release()
-    
+
     def start(self):
         assert not self.active
         self.__flag = threading.Event()
         threading.Thread.start(self)
         self.__flag.wait()
-    
+
     def run(self):
         self.active = True
         self.__flag.set()
@@ -69,7 +68,7 @@ class FakeSMTPServer(smtpd.SMTPServer, threading.Thread):
             asyncore.loop(timeout=0.1, count=1)
             self.active_lock.release()
         asyncore.close_all()
-    
+
     def stop(self):
         assert self.active
         self.active = False
@@ -95,7 +94,7 @@ def teardown_module():
 def test_sending():
     global server
     server.flush_sink()
-    
+
     mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=False)
     email1, email2, email3, email4 = make_emails()
 
@@ -107,7 +106,7 @@ def test_sending():
     assert len(sink) == 4
 
     message = sink[0]
-    print message
+    print(message)
     assert message.get_content_type() == 'text/plain'
     assert message.get('subject') == 'Subject-1'
     assert message.get('from') == 'from@example.com'
@@ -134,14 +133,13 @@ def test_wrong_port():
 
 def test_fail_silently():
     mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=True,
-        fail_silently=True)
+                        fail_silently=True)
     mailer.open()
-    
+
     mailer = SMTPMailer(host='123', port=8000, use_tls=False,
-        fail_silently=True)
+                        fail_silently=True)
     mailer.open()
 
     mailer = SMTPMailer(host='127.0.0.1', port=3000, use_tls=False,
-        fail_silently=True)
+                        fail_silently=True)
     mailer.open()
-

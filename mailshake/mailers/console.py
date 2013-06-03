@@ -36,4 +36,3 @@ class ToConsoleMailer(BaseMailer):
         finally:
             self._lock.release()
         return len(email_messages)
-

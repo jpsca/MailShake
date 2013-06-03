@@ -11,7 +11,7 @@ class BaseMailer(object):
     def __init__(self, default_from=None, fail_silently=False, *args, **kwargs):
         self.default_from = default_from
         self.fail_silently = fail_silently
-    
+
     def open(self):
         """Open a network connection.
 
@@ -45,4 +45,3 @@ class BaseMailer(object):
         email messages sent.
         """
         raise NotImplementedError
-
