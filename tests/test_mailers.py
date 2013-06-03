@@ -6,12 +6,8 @@ from StringIO import StringIO
 import sys
 import tempfile
 
-from mailshake import EmailMessage
-from mailshake.mailers.base import BaseMailer
-from mailshake.mailers.dummy import DummyMailer
-from mailshake.mailers.memory import ToMemoryMailer
-from mailshake.mailers.console import ToConsoleMailer
-from mailshake.mailers.filebased import ToFileMailer
+from mailshake import (EmailMessage, BaseMailer, DummyMailer, ToMemoryMailer,
+                       ToConsoleMailer, ToFileMailer)
 import pytest
 
 
@@ -94,14 +90,14 @@ def test_to_console_stream_kwarg():
 def test_to_file_mailer():
     tmp_dir = tempfile.mkdtemp()
     mailer = ToFileMailer(tmp_dir)
-    
+
     n = mailer.send('Subject', 'Content', 'from@example.com', 'to@example.com')
     assert n == 1
     assert len(os.listdir(tmp_dir)) == 1
 
     filepath = os.path.join(tmp_dir, os.listdir(tmp_dir)[0])
     message = email.message_from_file(open(filepath))
-    
+
     assert message.get_content_type() == 'text/plain'
     assert message.get('subject') == 'Subject'
     assert message.get('from') == 'from@example.com'

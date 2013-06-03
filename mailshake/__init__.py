@@ -32,6 +32,7 @@
     MIT License. (http://www.opensource.org/licenses/mit-license.php).
 
 """
+from .mailers.base import BaseMailer
 from .mailers.console import ToConsoleMailer
 from .mailers.dummy import DummyMailer
 from .mailers.filebased import ToFileMailer

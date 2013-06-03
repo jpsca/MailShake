@@ -6,7 +6,7 @@ import pytest
 def test_ascii():
     email = EmailMessage('Subject', 'Content', 'from@example.com',
                          'to@example.com')
-    message = email.message()
+    message = email.render()
 
     assert message['Subject'].encode() == 'Subject'
     assert message.get_payload() == 'Content'
@@ -17,7 +17,7 @@ def test_ascii():
 def test_multiple_recipients():
     email = EmailMessage('Subject', 'Content', 'from@example.com',
                          ['to@example.com', 'other@example.com'])
-    message = email.message()
+    message = email.render()
 
     assert message['Subject'].encode() == 'Subject'
     assert message.get_payload() == 'Content'
@@ -28,7 +28,7 @@ def test_multiple_recipients():
 def test_cc():
     email = EmailMessage('Subject', 'Content', 'from@example.com',
                          'to@example.com', cc='cc@example.com')
-    message = email.message()
+    message = email.render()
 
     assert message['Cc'] == 'cc@example.com'
     assert email.get_recipients() == ['to@example.com', 'cc@example.com']
@@ -38,7 +38,7 @@ def test_multiple_cc():
     email = EmailMessage('Subject', 'Content', 'from@example.com',
                          'to@example.com',
                          cc=['cc@example.com', 'cc.other@example.com'])
-    message = email.message()
+    message = email.render()
 
     assert message['Cc'] == 'cc@example.com, cc.other@example.com'
     assert email.get_recipients() == [
@@ -50,7 +50,7 @@ def test_multiple_cc_and_to():
     email = EmailMessage('Subject', 'Content', 'from@example.com',
                          to=['to@example.com', 'other@example.com'],
                          cc=['cc@example.com', 'cc.other@example.com'])
-    message = email.message()
+    message = email.render()
 
     assert message['Cc'] == 'cc@example.com, cc.other@example.com'
     assert email.get_recipients() == [
@@ -63,7 +63,7 @@ def test_multiple_to_cc_bcc():
                          to=['to@example.com', 'other@example.com'],
                          cc=['cc@example.com', 'cc.other@example.com'],
                          bcc=['bcc@example.com', 'bcc.other@example.com'])
-    message = email.message()
+    message = email.render()
 
     assert message['Cc'] == 'cc@example.com, cc.other@example.com'
     assert email.get_recipients() == [
@@ -77,7 +77,7 @@ def test_recipients_as_tuple():
                          to=('to@example.com', 'other@example.com'),
                          cc=('cc@example.com', 'cc.other@example.com'),
                          bcc=('bcc@example.com',))
-    message = email.message()
+    message = email.render()
 
     assert message['Cc'] == 'cc@example.com, cc.other@example.com'
     assert email.get_recipients() == [
@@ -90,7 +90,7 @@ def test_header_injection():
     email = EmailMessage('Subject\nInjection Test', 'Content',
                          'from@example.com', 'to@example.com')
     with pytest.raises(ValueError):
-        email.message()
+        email.render()
 
 
 def test_space_continuation():
@@ -98,7 +98,7 @@ def test_space_continuation():
     """
     email = EmailMessage('Long subject lines that get wrapped should use a space continuation character to get expected behaviour in Outlook and Thunderbird',
                          'Content', 'from@example.com', 'to@example.com')
-    message = email.message()
+    message = email.render()
 
     assert message['Subject'] == 'Long subject lines that get wrapped should use a space continuation\n character to get expected behaviour in Outlook and Thunderbird'
 
@@ -128,21 +128,21 @@ def test_from_header():
     email = EmailMessage('Subject', 'Content', 'bounce@example.com',
                          'to@example.com',
                          headers={'From': 'from@example.com'})
-    message = email.message()
+    message = email.render()
 
     assert message['From'] == 'from@example.com'
 
 
 def test_multiple_message_call():
     """Make sure that headers are not changed when calling
-    `EmailMessage.message()` again.
+    `EmailMessage.render()` again.
     """
     email = EmailMessage('Subject', 'Content', 'bounce@example.com',
                          'to@example.com',
                          headers={'From': 'from@example.com'})
-    message = email.message()
+    message = email.render()
     assert message['From'] == 'from@example.com'
-    message = email.message()
+    message = email.render()
     assert message['From'] == 'from@example.com'
 
 
@@ -154,13 +154,13 @@ def test_unicode_address_header():
     email = EmailMessage('Subject', 'Content', 'from@example.com',
                          ['"Firstname Sürname" <to@example.com>',
                           'other@example.com'])
-    message = email.message()
+    message = email.render()
     assert message['To'] == '=?utf-8?q?Firstname_S=C3=BCrname?= <to@example.com>, other@example.com'
 
     email = EmailMessage('Subject', 'Content', 'from@example.com',
                          ['other@example.com',
                           '"Sürname, Firstname" <to@example.com>'])
-    message = email.message()
+    message = email.render()
     assert message['To'] == 'other@example.com, =?utf-8?q?S=C3=BCrname=2C_Firstname?= <to@example.com>'
 
 
@@ -171,7 +171,7 @@ def test_unicode_headers():
     }
     email = EmailMessage(u"Gżegżółka", "Content", "from@example.com",
                          "to@example.com", headers=headers)
-    message = email.message()
+    message = email.render()
 
     assert message['Subject'] == '=?utf-8?b?R8W8ZWfFvMOzxYJrYQ==?='
     assert message['Sender'] == '=?utf-8?q?Firstname_S=C3=BCrname?= <sender@example.com>'
@@ -187,7 +187,7 @@ def test_html():
 
     email = EmailMessage(subject, text_content, from_email, to,
                          html_content=html_content)
-    message = email.message()
+    message = email.render()
 
     assert message.is_multipart()
     assert message.get_content_type() == 'multipart/alternative'
@@ -210,7 +210,7 @@ def test_safe_mime_multipart():
     email = EmailMessage(subject, text_content, from_email, to,
                          html_content=html_content, headers=headers)
     email.encoding = 'iso-8859-1'
-    message = email.message()
+    message = email.render()
 
     assert message['To'] == '=?iso-8859-1?q?S=FCrname=2C_Firstname?= <to@example.com>'
     assert message['Subject'].encode() == u'=?iso-8859-1?q?Message_from_Firstname_S=FCrname?='
@@ -223,7 +223,7 @@ def test_encoding():
     email = EmailMessage('Subject', 'Firstname Sürname is a great guy.',
                          'from@example.com', 'other@example.com')
     email.encoding = 'iso-8859-1'
-    message = email.message()
+    message = email.render()
 
     assert message.as_string().startswith(
         'Content-Type: text/plain; charset="iso-8859-1"'
@@ -241,7 +241,7 @@ def test_encoding():
     email = EmailMessage('Subject', text_content, 'from@example.com',
                          'to@example.com', html_content=html_content)
     email.encoding = 'iso-8859-1'
-    message = email.message()
+    message = email.render()
 
     assert message.get_payload(0).as_string() == (
         'Content-Type: text/plain; charset="iso-8859-1"'
@@ -266,7 +266,7 @@ def test_attachments():
                          html_content=html_content)
     email.attach('an attachment.pdf', '%PDF-1.4.%...',
                  mimetype='application/pdf')
-    message = email.message()
+    message = email.render()
 
     assert message.is_multipart()
     assert message.get_content_type() == 'multipart/mixed'

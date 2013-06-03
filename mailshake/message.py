@@ -64,7 +64,7 @@ class EmailMessage(object):
         self.attachments = attachments or []
         self.extra_headers = headers or {}
 
-    def message(self):
+    def render(self):
         msg = self._create_message()
         msg['Subject'] = self.subject
         msg['From'] = self.extra_headers.get('From', self.from_email)
@@ -91,7 +91,7 @@ class EmailMessage(object):
         return msg
 
     def as_string(self, unixfrom=False):
-        return self.message().as_string(unixfrom)
+        return self.render().as_string(unixfrom)
 
     def get_recipients(self):
         """Returns a list of all recipients of the email (includes direct
