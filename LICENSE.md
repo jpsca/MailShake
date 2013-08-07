@@ -1,6 +1,9 @@
-# LICENSE
+============
+LICENSE
+============
 
-© Lúcuma labs. MIT License. (http://www.opensource.org/licenses/mit-license.php)
+Copyright © 2012 by Lúcuma labs.
+MIT License. (http://www.opensource.org/licenses/mit-license.php)
 
 Originally derived from the mail backends of Django (http://djangoproject.com).
 The original code was BSD licensed:

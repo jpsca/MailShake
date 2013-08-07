@@ -6,8 +6,7 @@ import smtpd
 from smtplib import SMTPException
 import threading
 
-from mailshake import EmailMessage
-from mailshake.mailers.smtp import SMTPMailer
+from mailshake import EmailMessage, SMTPMailer
 import pytest
 
 
@@ -20,10 +19,6 @@ def make_emails():
 
 
 class FakeSMTPServer(smtpd.SMTPServer, threading.Thread):
-    """Asyncore SMTP server wrapped into a thread.
-    Based on DummyFTPServer from:
-    http://svn.python.org/view/python/branches/py3k/Lib/test/test_ftplib.py?revision=86061&view=markup
-    """
 
     def __init__(self, *args, **kwargs):
         threading.Thread.__init__(self)

@@ -8,26 +8,42 @@ These wrappers are provided to make sending email extra quick, to make it easy t
 
 Usage:
 
-    from mailshake import EmailMessage, Mailer
-    
-    email_msg = EmailMessage(
-        "Weekend getaway",
-        'Here's a photo of us from our Europe trip.',
-        'from@example.com',
-        ['mary@example.com', 'bob@example.com'],
-    )
-    email_msg.attach("picture.jpg")
-    
-    mailer = Mailer()
-    mailer.send(email_msg)
+```python
+from mailshake import SMTPMailer
 
-Severals other mailers are available for testing: `ToConsoleMailer`, `ToFileMailer`, `ToMemoryMailer` and `DummyMailer` (does nothing).
+mailer = SMTPMailer()
+mailer.send(
+    subject='Hi',
+    text_content='Hello world!',
+    from_email='from@example.com',
+    to=['mary@example.com', 'bob@example.com']
+)
+```
 
+You can also compose several messages and send them at the same time::
+
+```python
+from mailshake import SMTPMailer, EmailMessage
+
+mailer = SMTPMailer()
+messages = []
+email_msg = EmailMessage(
+    "Weekend getaway",
+    'Here's a photo of us from our trip.',
+    'from@example.com',
+    ['mary@example.com', 'bob@example.com']
+)
+email_msg.attach("picture.jpg")
+messages.append(email_msg)
+
+#…
+
+mailer.send_messages(messages)
+```
 
 --------
 
 © by Lúcuma labs (http://lucumalabs.com).
-MIT License. (http://www.opensource.org/licenses/mit-license.php)
 
-Extracted from the mail backends of Django (http://djangoproject.com)
-The original code was BSD licensed. See `LEGAL.md` for more details.
+MIT License. (http://www.opensource.org/licenses/mit-license.php).
+Originally derived from the mail backends of Django (http://djangoproject.com). See `LICENSE.md
