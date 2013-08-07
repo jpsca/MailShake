@@ -73,7 +73,7 @@ setup(
     zip_safe=False,
     url='http://github.com/lucuma/Voodoo',
     license='MIT license (http://www.opensource.org/licenses/mit-license.php)',
-    description='Wrappers to easily sending emails from your Python app',
+    description='Dramatically simplify sending email from your python app',
     long_description=get_description(),
     install_requires=get_requirements(),
     classifiers=[

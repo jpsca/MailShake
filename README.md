@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/lucuma/MailShake.png)](https://travis-ci.org/lucuma/MailShake)
     
-Although Python makes sending email relatively easy via the smtplib module, this bundle provides a couple of light wrappers over it.
+Although Python makes sending email relatively easy via the smtplib module, this library provides a couple of light wrappers over it.
 
 These wrappers are provided to make sending email extra quick, to make it easy to test email sending during development, and to provide support for platforms that can’t use SMTP.
 
