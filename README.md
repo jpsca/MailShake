@@ -29,7 +29,7 @@ mailer = SMTPMailer()
 messages = []
 email_msg = EmailMessage(
     "Weekend getaway",
-    'Here's a photo of us from our trip.',
+    'Here is a photo of us from our trip.',
     'from@example.com',
     ['mary@example.com', 'bob@example.com']
 )
