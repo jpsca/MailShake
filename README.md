@@ -29,9 +29,9 @@ mailer = SMTPMailer()
 messages = []
 email_msg = EmailMessage(
     "Weekend getaway",
-    'Here is a photo of us from our trip.',
-    'from@example.com',
-    ['mary@example.com', 'bob@example.com']
+    "Here's a photo of us from our trip.",
+    "from@example.com",
+    "bob@example.com"
 )
 email_msg.attach("picture.jpg")
 messages.append(email_msg)
@@ -43,7 +43,8 @@ mailer.send_messages(messages)
 
 --------
 
-© by Lúcuma labs (http://lucumalabs.com).
+© 2011 by Lúcuma labs (http://lucumalabs.com).
 
 MIT License. (http://www.opensource.org/licenses/mit-license.php).
+
 Originally derived from the mail backends of Django (http://djangoproject.com). See `LICENSE.md
