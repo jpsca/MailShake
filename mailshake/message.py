@@ -32,15 +32,18 @@ class EmailMessage(object):
     alternative_subtype = 'alternative'
     encoding = 'utf-8'
 
-    def __init__(self, subject='', text_content='', from_email=None, to=None,
-                 cc=None, bcc=None, html_content=None, attachments=None,
-                 headers=None):
+    def __init__(self, subject='', text='', from_email=None, to=None,
+                 cc=None, bcc=None, html=None, attachments=None,
+                 headers=None, text_content=None, html_content=None):
         """Initialize a single email message (which can be sent to multiple
         recipients).
 
         All strings used to create the message can be unicode strings
         (or UTF-8 bytestrings). The SafeMIMEText class will handle any
         necessary encoding conversions.
+
+        `text_content` and `html_content` parameters exists for backwards
+        compatibility. Use `text` and `html` instead.
         """
         to = to or []
         if isinstance(to, string_types):
@@ -59,8 +62,8 @@ class EmailMessage(object):
 
         self.from_email = from_email
         self.subject = subject
-        self.text_content = text_content
-        self.html_content = html_content
+        self.text = text or text_content or ''
+        self.html = html or html_content or ''
         self.attachments = attachments or []
         self.extra_headers = headers or {}
 
@@ -122,24 +125,24 @@ class EmailMessage(object):
         self.attach(filename, content, mimetype)
 
     def _create_message(self):
-        text_content = ''
-        if self.text_content:
-            text_content = SafeMIMEText(
-                to_bytestring(self.text_content, self.encoding),
+        text = ''
+        if self.text:
+            text = SafeMIMEText(
+                to_bytestring(self.text, self.encoding),
                 self.content_subtype, self.encoding)
-        msg = text_content
+        msg = text
 
-        if self.html_content:
+        if self.html:
             msg = SafeMIMEMultipart(_subtype=self.alternative_subtype,
                                     encoding=self.encoding)
-            if text_content:
-                msg.attach(text_content)
+            if text:
+                msg.attach(text)
 
-            if self.html_content:
-                html_content = SafeMIMEText(
-                    to_bytestring(self.html_content, self.encoding),
+            if self.html:
+                html = SafeMIMEText(
+                    to_bytestring(self.html, self.encoding),
                     self.html_subtype, self.encoding)
-                msg.attach(html_content)
+                msg.attach(html)
 
         if self.attachments:
             _msg = SafeMIMEMultipart(_subtype=self.mixed_subtype,
