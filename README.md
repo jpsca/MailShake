@@ -2,21 +2,18 @@
 
 [![Build Status](https://travis-ci.org/lucuma/MailShake.png)](https://travis-ci.org/lucuma/MailShake)
 
-Mailers availiable:
-    * SMTPMailer
-    * AmazonSESMailer
-
-and:
-
-    * ToConsoleMailer (prints the emails in the console)
-    * ToFileMailer (save the emails in a file)
-    * ToMemoryMailer (for testing)
-    * DummyMailer (does nothing)
-
-
 Although Python makes sending email relatively easy via the smtplib module, this library provides a couple of light wrappers over it.
 
 These wrappers are provided to make sending email extra quick, to make it easy to test email sending during development, and to provide support for platforms that can’t use SMTP.
+
+Mailers availiable:
+
+* SMTPMailer
+* AmazonSESMailer
+* ToConsoleMailer (prints the emails in the console)
+* ToFileMailer (save the emails in a file)
+* ToMemoryMailer (for testing)
+* DummyMailer (does nothing)
 
 Usage:
 
