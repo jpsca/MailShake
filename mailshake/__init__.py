@@ -11,7 +11,7 @@ These wrappers are provided to make sending email extra quick, to make it easy t
 Usage::
 
     from mailshake import SMTPMailer
-    
+
     mailer = SMTPMailer()
     mailer.send(
         subject='Hi',
@@ -23,7 +23,7 @@ Usage::
 You can also compose several messages and send them at the same time::
 
     from mailshake import SMTPMailer, EmailMessage
-    
+
     mailer = SMTPMailer()
     messages = []
     email_msg = EmailMessage(
@@ -40,12 +40,21 @@ You can also compose several messages and send them at the same time::
     mailer.send_messages(messages)
 
 
-Severals other mailers are available for testing: `ToConsoleMailer`, `ToFileMailer`, `ToMemoryMailer` and `DummyMailer` (does nothing).
+Mailers availiable:
+    * SMTPMailer
+    * AmazonSESMailer
+
+and:
+
+    * ToConsoleMailer (prints the emails in the console)
+    * ToFileMailer (save the emails in a file)
+    * ToMemoryMailer (for testing)
+    * DummyMailer (does nothing)
 
 --------
 [MIT License](http://www.opensource.org/licenses/mit-license.php).
 
-© 2011 by [Lúcuma labs](http://lucumalabs.com). 
+© 2011 by [Lúcuma labs](http://lucumalabs.com).
 
 """
 from .mailers.base import BaseMailer
@@ -55,9 +64,11 @@ from .mailers.filebased import ToFileMailer
 from .mailers.memory import ToMemoryMailer
 from .mailers.smtp import SMTPMailer
 
+from .mailers.amazon_ses import AmazonSESMailer
+
 from .message import EmailMessage
 
 
 Mailer = ToConsoleMailer
 
-__version__ = '0.9'
+__version__ = '0.9.1'

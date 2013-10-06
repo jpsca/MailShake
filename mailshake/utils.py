@@ -104,3 +104,4 @@ def forbid_multi_line_headers(name, val, encoding='utf-8'):
         if name.lower() == 'subject':
             val = Header(val)
     return name, val
+

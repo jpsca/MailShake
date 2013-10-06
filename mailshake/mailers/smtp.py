@@ -16,6 +16,8 @@ class SMTPMailer(BaseMailer):
 
     def __init__(self, host='localhost', port=587, username=None, password=None,
                  use_tls=True, *args, **kwargs):
+        """
+        """
         self.host = host
         self.port = port
         self.username = username

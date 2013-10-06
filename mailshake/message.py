@@ -13,6 +13,7 @@ except ImportError:
     from StringIO import StringIO
 
 from .compat import to_bytestring
+from .html2text import extract_text_from_html
 from .utils import string_types, forbid_multi_line_headers, make_msgid
 
 
@@ -33,8 +34,9 @@ class EmailMessage(object):
     encoding = 'utf-8'
 
     def __init__(self, subject='', text='', from_email=None, to=None,
-                 cc=None, bcc=None, html=None, attachments=None,
-                 headers=None, text_content=None, html_content=None):
+                 cc=None, bcc=None, reply_to=None,
+                 html=None, attachments=None, headers=None,
+                 text_content=None, html_content=None):
         """Initialize a single email message (which can be sent to multiple
         recipients).
 
@@ -60,12 +62,22 @@ class EmailMessage(object):
             bcc = [bcc]
         self.bcc = list(bcc)
 
+        reply_to = reply_to or []
+        if isinstance(reply_to, string_types):
+            reply_to = [reply_to]
+        self.reply_to = list(reply_to)
+
         self.from_email = from_email
         self.subject = subject
-        self.text = text or text_content or ''
-        self.html = html or html_content or ''
         self.attachments = attachments or []
         self.extra_headers = headers or {}
+
+        text = text or text_content or ''
+        html = html or html_content or ''
+        if html and not text:
+            text = extract_text_from_html(html)
+        self.text = text
+        self.html = html
 
     def render(self):
         msg = self._create_message()
