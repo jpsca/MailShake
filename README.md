@@ -1,6 +1,6 @@
 # MailShake
 
-![Mailshake logo](https://raw.github.com/lucuma/Voodoo/master/docs/static/images/mailshake@2x.png)
+![Mailshake logo](https://raw.github.com/lucuma/mailshake/master/docs/static/images/mailshake@2x.png)
 
 [![Build Status](https://travis-ci.org/lucuma/MailShake.png)](https://travis-ci.org/lucuma/MailShake)
 
