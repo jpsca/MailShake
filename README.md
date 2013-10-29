@@ -1,5 +1,7 @@
 # MailShake
 
+![Mailshake logo](https://raw.github.com/lucuma/Voodoo/master/docs/static/images/mailshake@2x.png)
+
 [![Build Status](https://travis-ci.org/lucuma/MailShake.png)](https://travis-ci.org/lucuma/MailShake)
 
 Although Python makes sending email relatively easy via the smtplib module, this library provides a couple of light wrappers over it.
@@ -52,8 +54,8 @@ mailer.send_messages(messages)
 
 --------
 
-© 2011 by Lúcuma labs (http://lucumalabs.com).
+© 2011 by [Lúcuma labs (http://lucumalabs.com)](http://lucumalabs.com).
 
 MIT License. (http://www.opensource.org/licenses/mit-license.php).
 
-Originally derived from the mail backends of Django (http://djangoproject.com). See `LICENSE.md
+Logo by [Alfonso Mello](http://www.alfonsomello.com/)
