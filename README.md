@@ -1,6 +1,7 @@
-# MailShake
 
 ![Mailshake logo](https://raw.github.com/lucuma/mailshake/master/docs/static/images/mailshake@2x.png)
+
+# mailshake
 
 [![Build Status](https://travis-ci.org/lucuma/MailShake.png)](https://travis-ci.org/lucuma/MailShake)
 
