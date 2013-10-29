@@ -11,7 +11,7 @@ class AmazonSESMailer(BaseMailer):
     """
 
     def __init__(self, region, aws_access_key_id, aws_secret_access_key,
-                 return_path=None):
+                 return_path=None, *args, **kwargs):
         """
         """
         import boto.ses
