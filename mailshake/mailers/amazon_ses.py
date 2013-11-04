@@ -34,7 +34,9 @@ class AmazonSESMailer(BaseMailer):
             data = {
                 'source': msg.from_email,
                 'subject': msg.subject,
+                'body': None,
                 'to_addresses': msg.to,
+
                 'cc_addresses': msg.cc,
                 'bcc_addresses': msg.bcc,
                 'reply_addresses': msg.reply_to,

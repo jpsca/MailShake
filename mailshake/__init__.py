@@ -71,4 +71,4 @@ from .message import EmailMessage
 
 Mailer = ToConsoleMailer
 
-__version__ = '0.9.2'
+__version__ = '0.9.3'
