@@ -137,17 +137,16 @@ class EmailMessage(object):
         self.attach(filename, content, mimetype)
 
     def _create_message(self):
-        text = ''
-        if self.text:
-            text = SafeMIMEText(
-                to_bytestring(self.text, self.encoding),
-                self.content_subtype, self.encoding)
+        text = SafeMIMEText(
+            to_bytestring(self.text or '', self.encoding),
+            self.content_subtype, self.encoding
+        )
         msg = text
 
         if self.html:
             msg = SafeMIMEMultipart(_subtype=self.alternative_subtype,
                                     encoding=self.encoding)
-            if text:
+            if self.text:
                 msg.attach(text)
 
             if self.html:
@@ -190,7 +189,8 @@ class EmailMessage(object):
         if basetype == 'text':
             attachment = SafeMIMEText(
                 to_bytestring(content, self.encoding),
-                subtype, self.encoding)
+                subtype, self.encoding
+            )
         else:
             # Encode non-text attachments with base64.
             attachment = MIMEBase(basetype, subtype)

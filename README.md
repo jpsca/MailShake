@@ -39,18 +39,19 @@ from mailshake import SMTPMailer, EmailMessage
 
 mailer = SMTPMailer()
 messages = []
+
 email_msg = EmailMessage(
     "Weekend getaway",
     "Here's a photo of us from our trip.",
     "from@example.com",
     "bob@example.com"
 )
-email_msg.attach("picture.jpg")
+email_msg.attach_file("picture.jpg")
 messages.append(email_msg)
 
 #…
 
-mailer.send_messages(messages)
+mailer.send_messages(*messages)
 ```
 
 --------
