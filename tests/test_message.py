@@ -22,28 +22,52 @@ def test_multiple_recipients():
     assert message['Subject'].encode() == 'Subject'
     assert message.get_payload() == 'Content'
     assert message['From'] == 'from@example.com'
-    assert message['To'] == 'to@example.com, other@example.com'
+    assert message['To'] == ('to@example.com, other@example.com')
 
 
 def test_cc():
     email = EmailMessage('Subject', 'Content', 'from@example.com',
-                         'to@example.com', cc='cc@example.com')
+                         cc='cc@example.com')
     message = email.render()
 
     assert message['Cc'] == 'cc@example.com'
-    assert email.get_recipients() == ['to@example.com', 'cc@example.com']
+    assert not message['To']
+    assert not message['Bcc']
+    assert email.get_recipients() == ['cc@example.com']
 
 
 def test_multiple_cc():
     email = EmailMessage('Subject', 'Content', 'from@example.com',
-                         'to@example.com',
                          cc=['cc@example.com', 'cc.other@example.com'])
     message = email.render()
 
+    print message['Cc']
     assert message['Cc'] == 'cc@example.com, cc.other@example.com'
-    assert email.get_recipients() == [
-        'to@example.com',
-        'cc@example.com', 'cc.other@example.com']
+    assert not message['To']
+    assert not message['Bcc']
+    assert email.get_recipients() == ['cc@example.com', 'cc.other@example.com']
+
+
+def test_bcc():
+    email = EmailMessage('Subject', 'Content', 'from@example.com',
+                         bcc='bcc@example.com')
+    message = email.render()
+
+    assert message['Bcc'] == 'bcc@example.com'
+    assert not message['To']
+    assert not message['Cc']
+    assert email.get_recipients() == ['bcc@example.com']
+
+
+def test_multiple_bcc():
+    email = EmailMessage('Subject', 'Content', 'from@example.com',
+                         bcc=['bcc@example.com', 'bcc.other@example.com'])
+    message = email.render()
+
+    assert message['Bcc'] == 'bcc@example.com, bcc.other@example.com'
+    assert not message['To']
+    assert not message['Cc']
+    assert email.get_recipients() == ['bcc@example.com', 'bcc.other@example.com']
 
 
 def test_multiple_cc_and_to():
@@ -52,10 +76,13 @@ def test_multiple_cc_and_to():
                          cc=['cc@example.com', 'cc.other@example.com'])
     message = email.render()
 
+    assert message['To'] == 'to@example.com, other@example.com'
     assert message['Cc'] == 'cc@example.com, cc.other@example.com'
+    assert not message['Bcc']
     assert email.get_recipients() == [
         'to@example.com', 'other@example.com',
-        'cc@example.com', 'cc.other@example.com']
+        'cc@example.com', 'cc.other@example.com',
+    ]
 
 
 def test_multiple_to_cc_bcc():
@@ -65,11 +92,14 @@ def test_multiple_to_cc_bcc():
                          bcc=['bcc@example.com', 'bcc.other@example.com'])
     message = email.render()
 
+    assert message['To'] == 'to@example.com, other@example.com'
     assert message['Cc'] == 'cc@example.com, cc.other@example.com'
+    assert message['Bcc'] == 'bcc@example.com, bcc.other@example.com'
     assert email.get_recipients() == [
         'to@example.com', 'other@example.com',
         'cc@example.com', 'cc.other@example.com',
-        'bcc@example.com', 'bcc.other@example.com']
+        'bcc@example.com', 'bcc.other@example.com',
+    ]
 
 
 def test_recipients_as_tuple():
@@ -79,11 +109,14 @@ def test_recipients_as_tuple():
                          bcc=('bcc@example.com',))
     message = email.render()
 
+    assert message['To'] == 'to@example.com, other@example.com'
     assert message['Cc'] == 'cc@example.com, cc.other@example.com'
+    assert message['Bcc'] == 'bcc@example.com'
     assert email.get_recipients() == [
         'to@example.com', 'other@example.com',
         'cc@example.com', 'cc.other@example.com',
-        'bcc@example.com']
+        'bcc@example.com',
+    ]
 
 
 def test_header_injection():

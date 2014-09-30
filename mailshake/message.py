@@ -93,6 +93,9 @@ class EmailMessage(object):
         if self.cc:
             msg['Cc'] = ', '.join(self.cc)
 
+        if self.bcc:
+            msg['Bcc'] = ', '.join(self.bcc)
+
         # Email header names are case-insensitive (RFC 2045)
         header_names = [key.lower() for key in self.extra_headers]
         if 'date' not in header_names:
