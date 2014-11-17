@@ -68,7 +68,7 @@ setup(
     packages=[PACKAGE],
     package_data=find_packages_data(PACKAGE, 'tests'),
     zip_safe=False,
-    url='http://github.com/lucuma/Voodoo',
+    url='https://github.com/lucuma/MailShake',
     license='MIT license (http://www.opensource.org/licenses/mit-license.php)',
     description='Dramatically simplify sending email from your python app',
     long_description=get_description(),
