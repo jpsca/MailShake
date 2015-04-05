@@ -56,7 +56,7 @@ mailer.send_messages(*messages)
 
 --------
 
-Copyright (c) Juan-Pablo Scaletti
+Copyright Juan-Pablo Scaletti
 
 MIT License. (see LICENSE).
 
