@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 """
 =================
 MailShake
@@ -51,22 +51,21 @@ and:
     * ToMemoryMailer (for testing)
     * DummyMailer (does nothing)
 
---------
-[MIT License](http://www.opensource.org/licenses/mit-license.php).
 
-© 2011 by [Lúcuma labs](http://lucumalabs.com).
+:copyright: `Juan-Pablo Scaletti <http://jpscaletti.com>`_.
+:license: MIT, see LICENSE for more details.
 
 """
-from .mailers.base import BaseMailer
-from .mailers.console import ToConsoleMailer
-from .mailers.dummy import DummyMailer
-from .mailers.filebased import ToFileMailer
-from .mailers.memory import ToMemoryMailer
-from .mailers.smtp import SMTPMailer
+from .mailers.base import BaseMailer  # noqa
+from .mailers.console import ToConsoleMailer  # noqa
+from .mailers.dummy import DummyMailer  # noqa
+from .mailers.filebased import ToFileMailer  # noqa
+from .mailers.memory import ToMemoryMailer  # noqa
+from .mailers.smtp import SMTPMailer  # noqa
 
-from .mailers.amazon_ses import AmazonSESMailer
+from .mailers.amazon_ses import AmazonSESMailer  # noqa
 
-from .message import EmailMessage
+from .message import EmailMessage  # noqa
 
 
 Mailer = ToConsoleMailer

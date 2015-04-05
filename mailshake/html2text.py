@@ -1,6 +1,7 @@
-# -*- coding: utf-8 -*-
-import htmlentitydefs
+# coding=utf-8
 import re
+
+from .compat import name2codepoint
 
 
 rx_body = re.compile(r'.*<body[^>]*>(.*)</body>', re.IGNORECASE | re.DOTALL)
@@ -40,7 +41,7 @@ def unescape(html):
         else:
             # named entity
             try:
-                html = unichr(htmlentitydefs.name2codepoint[html[1:-1]])
+                html = unichr(name2codepoint[html[1:-1]])
             except KeyError:
                 pass
         return html # leave as is

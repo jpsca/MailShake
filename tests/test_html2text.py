@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 from mailshake.html2text import extract_text_from_html
 
 

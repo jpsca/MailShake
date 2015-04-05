@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 from email import encoders, charset as CharSet
 from email.generator import Generator
 from email.mime.text import MIMEText
@@ -7,12 +7,8 @@ from email.mime.base import MIMEBase
 from email.utils import formatdate
 import mimetypes
 import os
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
 
-from .compat import to_bytestring
+from .compat import to_native, StringIO
 from .html2text import extract_text_from_html
 from .utils import string_types, forbid_multi_line_headers, make_msgid
 
@@ -141,7 +137,7 @@ class EmailMessage(object):
 
     def _create_message(self):
         text = SafeMIMEText(
-            to_bytestring(self.text or '', self.encoding),
+            to_native(self.text or '', self.encoding),
             self.content_subtype, self.encoding
         )
         msg = text
@@ -154,7 +150,7 @@ class EmailMessage(object):
 
             if self.html:
                 html = SafeMIMEText(
-                    to_bytestring(self.html, self.encoding),
+                    to_native(self.html, self.encoding),
                     self.html_subtype, self.encoding)
                 msg.attach(html)
 
@@ -191,7 +187,7 @@ class EmailMessage(object):
         basetype, subtype = mimetype.split('/', 1)
         if basetype == 'text':
             attachment = SafeMIMEText(
-                to_bytestring(content, self.encoding),
+                to_native(content, self.encoding),
                 subtype, self.encoding
             )
         else:

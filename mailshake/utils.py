@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 from email.header import Header
 from email.utils import formataddr, parseaddr, getaddresses
 import os
@@ -31,7 +31,7 @@ def sanitize_address(addr, encoding):
     nm, addr = addr
     nm = str(Header(nm, encoding))
     try:
-        addr = addr.encode('ascii')
+        addr.encode('ascii')
     except UnicodeEncodeError:  # IDN
         if u'@' in addr:
             localpart, domain = addr.split(u'@', 1)

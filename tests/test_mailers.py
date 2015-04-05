@@ -1,13 +1,14 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
+from __future__ import print_function
 import email
 import os
 import shutil
-from StringIO import StringIO
 import sys
 import tempfile
 
-from mailshake import (EmailMessage, BaseMailer, DummyMailer, ToMemoryMailer,
-                       ToConsoleMailer, ToFileMailer)
+from mailshake import (
+    EmailMessage, BaseMailer, DummyMailer, ToMemoryMailer, ToConsoleMailer, ToFileMailer)
+from mailshake.compat import StringIO
 import pytest
 
 

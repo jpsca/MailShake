@@ -56,8 +56,8 @@ mailer.send_messages(*messages)
 
 --------
 
-© 2011 by [Lúcuma labs (http://lucumalabs.com)](http://lucumalabs.com).
+Copyright (c) Juan-Pablo Scaletti
 
-MIT License. (http://www.opensource.org/licenses/mit-license.php).
+MIT License. (see LICENSE).
 
 Logo by [Alfonso Mello](http://www.alfonsomello.com/)

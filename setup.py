@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 b'This library requires Python 2.6, 2.7 or pypy'
 import io
 import os
@@ -69,7 +69,7 @@ setup(
     package_data=find_packages_data(PACKAGE, 'tests'),
     zip_safe=False,
     url='http://github.com/lucuma/Voodoo',
-    license='MIT license (http://www.opensource.org/licenses/mit-license.php)',
+    license='MIT license (see LICENSE)',
     description='Dramatically simplify sending email from your python app',
     long_description=get_description(),
     install_requires=get_requirements(),

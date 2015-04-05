@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 """
     SMTP mailer.
 """
@@ -27,7 +27,7 @@ class SMTPMailer(BaseMailer):
         self._lock = threading.RLock()
         super(SMTPMailer, self).__init__(*args, **kwargs)
 
-    def open(self):
+    def open(self, hostname=None):
         """Ensures we have a connection to the email server. Returns whether or
         not a new connection was required (True or False).
         """
@@ -36,8 +36,8 @@ class SMTPMailer(BaseMailer):
             return False
         try:
             # For performance, we use the cached FQDN for local_hostname.
-            self.connection = smtplib.SMTP(self.host, self.port,
-                                           local_hostname=DNS_NAME.get_fqdn())
+            hostname = hostname or DNS_NAME.get_fqdn()
+            self.connection = smtplib.SMTP(self.host, self.port, local_hostname=hostname)
             if self.use_tls:
                 self.connection.ehlo()
                 self.connection.starttls()

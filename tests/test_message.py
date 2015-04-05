@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
+from __future__ import print_function
 from mailshake import EmailMessage
 import pytest
 
@@ -41,7 +42,7 @@ def test_multiple_cc():
                          cc=['cc@example.com', 'cc.other@example.com'])
     message = email.render()
 
-    print message['Cc']
+    print(message['Cc'])
     assert message['Cc'] == 'cc@example.com, cc.other@example.com'
     assert not message['To']
     assert not message['Bcc']
@@ -144,15 +145,20 @@ def test_message_header_overrides():
     email = EmailMessage('Subject', 'Content', 'from@example.com',
                          'to@example.com', headers=headers)
 
-    assert email.as_string() == ('Content-Type: text/plain; charset="utf-8"'
-                                 '\nMIME-Version: 1.0'
-                                 '\nContent-Transfer-Encoding: 7bit'
-                                 '\nSubject: Subject'
-                                 '\nFrom: from@example.com'
-                                 '\nTo: to@example.com'
-                                 '\ndate: Fri, 09 Nov 2001 01:08:47 -0000'
-                                 '\nMessage-ID: foo'
-                                 '\n\nContent')
+    email_as_string = email.as_string()
+    lines = [
+        'Content-Type: text/plain; charset="utf-8"'
+        '\nMIME-Version: 1.0'
+        '\nContent-Transfer-Encoding: 7bit',
+        '\nSubject: Subject',
+        '\nFrom: from@example.com',
+        '\nTo: to@example.com',
+        '\ndate: Fri, 09 Nov 2001 01:08:47 -0000',
+        '\nMessage-ID: foo',
+        '\n\nContent',
+    ]
+    for line in lines:
+        assert line in email_as_string
 
 
 def test_from_header():

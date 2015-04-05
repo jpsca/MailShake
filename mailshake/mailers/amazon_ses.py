@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 """
     Mailer for Amazon Simple Email Server.
 """
