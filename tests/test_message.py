@@ -131,11 +131,17 @@ def test_header_injection():
 def test_space_continuation():
     """Test for space continuation character in long (ascii) subject headers.
     """
-    email = EmailMessage('Long subject lines that get wrapped should use a space continuation character to get expected behaviour in Outlook and Thunderbird',
-                         'Content', 'from@example.com', 'to@example.com')
+    email = EmailMessage(
+        'Long subject lines that get wrapped should use a space continuation '
+        'character to get expected behaviour in Outlook and Thunderbird',
+        'Content', 'from@example.com', 'to@example.com')
     message = email.render()
 
-    assert message['Subject'] == 'Long subject lines that get wrapped should use a space continuation\n character to get expected behaviour in Outlook and Thunderbird'
+    assert message['Subject'] == (
+        'Long subject lines that get wrapped should '
+        'use a space continuation\n character to get expected behaviour in '
+        'Outlook and Thunderbird'
+    )
 
 
 def test_message_header_overrides():

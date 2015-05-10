@@ -7,12 +7,12 @@ PY2 = PY_VERSION[0] == 2
 PY3 = not PY2
 
 if PY2:
-    from htmlentitydefs import name2codepoint
+    from htmlentitydefs import name2codepoint  # noqa
     try:
-        from cStringIO import StringIO
+        from cStringIO import StringIO  # noqa
     except ImportError:
-        from StringIO import StringIO
-    from io import BytesIO
+        from StringIO import StringIO  # noqa
+    from io import BytesIO  # noqa
 
     text_type = unicode
     binary_type = str
@@ -20,8 +20,8 @@ if PY2:
     unichr = unichr
 
 else:
-    from io import StringIO, BytesIO
-    from html.entities import name2codepoint
+    from io import StringIO, BytesIO  # noqa
+    from html.entities import name2codepoint  # noqa
 
     text_type = str
     binary_type = bytes

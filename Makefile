@@ -35,6 +35,9 @@ coverage:
 	py.test --cov-config .coveragerc --cov-report html --cov mailshake tests/
 	open htmlcov/index.html
 
+flake:
+	flake8 mailshake tests
+
 publish: clean
 	python setup.py sdist upload
 
