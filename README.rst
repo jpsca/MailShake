@@ -37,7 +37,7 @@ Usage:
         to=['mary@example.com', 'bob@example.com']
     )
 
-You can also compose several messages and send them at the same time::
+You can also compose several messages and send them at the same time:
 
 .. code:: python
 
