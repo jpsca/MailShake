@@ -1,7 +1,7 @@
 # coding=utf-8
 import re
 
-from .compat import name2codepoint
+from . import _compat as compat
 
 
 rx_body = re.compile(r'.*<body[^>]*>(.*)</body>', re.IGNORECASE | re.DOTALL)
@@ -33,18 +33,18 @@ def unescape(html):
         if html[:2] == "&#":
             try:
                 if html[:3] == "&#x":
-                    return unichr(int(html[3:-1], 16))
+                    return compat.unichr(int(html[3:-1], 16))
                 else:
-                    return unichr(int(html[2:-1]))
+                    return compat.unichr(int(html[2:-1]))
             except ValueError:
                 pass
         else:
             # named entity
             try:
-                html = unichr(name2codepoint[html[1:-1]])
+                html = compat.unichr(compat.name2codepoint[html[1:-1]])
             except KeyError:
                 pass
-        return html # leave as is
+        return html  # leave as is
     return re.sub(r"&#?\w+;", fixup, html)
 
 

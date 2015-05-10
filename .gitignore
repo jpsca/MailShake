@@ -11,4 +11,4 @@ dist
 htmlcov
 __pycache__
 *.sublime-*
-
+assets/*

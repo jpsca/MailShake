@@ -3,7 +3,7 @@
     SMTP mailer.
 """
 import smtplib
-import socket
+import ssl
 import threading
 
 from .base import BaseMailer
@@ -15,14 +15,17 @@ class SMTPMailer(BaseMailer):
     """
 
     def __init__(self, host='localhost', port=587, username=None, password=None,
-                 use_tls=True, *args, **kwargs):
-        """
-        """
+                 use_tls=None, use_ssl=None, timeout=None, *args, **kwargs):
         self.host = host
         self.port = port
         self.username = username
         self.password = password
         self.use_tls = bool(use_tls)
+        self.use_ssl = bool(use_ssl)
+        self.timeout = timeout
+        if self.use_ssl and self.use_tls:
+            raise ValueError("EMAIL_USE_TLS/EMAIL_USE_SSL are mutually exclusive")
+
         self.connection = None
         self._lock = threading.RLock()
         super(SMTPMailer, self).__init__(*args, **kwargs)
@@ -34,35 +37,51 @@ class SMTPMailer(BaseMailer):
         if self.connection:
             # Nothing to do if the connection is already open.
             return False
+
+        # If local_hostname is not specified, socket.getfqdn() gets used.
+        # For performance, we use the cached FQDN for local_hostname.
+        connection_params = {'local_hostname': DNS_NAME.get_fqdn()}
+        if self.timeout is not None:
+            connection_params['timeout'] = self.timeout
+
         try:
-            # For performance, we use the cached FQDN for local_hostname.
-            hostname = hostname or DNS_NAME.get_fqdn()
-            self.connection = smtplib.SMTP(self.host, self.port, local_hostname=hostname)
-            if self.use_tls:
+            self.connection = smtplib.SMTP(self.host, self.port, **connection_params)
+
+            if self.use_ssl:
+                context = ssl.SSLContext(ssl.PROTOCOL_SSLv3)
+                self.connection.ehlo()
+                self.connection.starttls(context)
+                self.connection.ehlo()
+            elif self.use_tls:
                 self.connection.ehlo()
                 self.connection.starttls()
                 self.connection.ehlo()
+
             if self.username and self.password:
                 self.connection.login(self.username, self.password)
+
         except:
             if not self.fail_silently:
                 raise
+
         return True
 
     def close(self):
         """Closes the connection to the email server.
         """
+        if self.connection is None:
+            return
         try:
             try:
                 self.connection.quit()
-            except socket.sslerror:
+            except (ssl.SSLError, smtplib.SMTPServerDisconnected):
                 # This happens when calling quit() on a TLS connection
-                # sometimes.
+                # sometimes, or when the connection was already disconnected
+                # by the server.
                 self.connection.close()
             except:
-                if self.fail_silently:
-                    return
-                raise
+                if not self.fail_silently:
+                    raise
         finally:
             self.connection = None
 
@@ -72,12 +91,10 @@ class SMTPMailer(BaseMailer):
         """
         if not email_messages:
             return
-        self._lock.acquire()
-        try:
+        with self._lock:
             new_conn_created = self.open()
             if not self.connection:
-                # We failed silently on open().
-                # Trying to send would be pointless.
+                # We failed silently on open(), trying to send would be pointless.
                 return
             num_sent = 0
             for message in email_messages:
@@ -86,8 +103,6 @@ class SMTPMailer(BaseMailer):
                     num_sent += 1
             if new_conn_created:
                 self.close()
-        finally:
-            self._lock.release()
         return num_sent
 
     def _send(self, email_message):
@@ -100,10 +115,11 @@ class SMTPMailer(BaseMailer):
         from_email = sanitize_address(from_email, email_message.encoding)
         recipients = [
             sanitize_address(addr, email_message.encoding)
-            for addr in recipients]
+            for addr in recipients
+        ]
         try:
-            self.connection.sendmail(from_email, recipients,
-                                     email_message.as_string())
+            self.connection.sendmail(
+                from_email, recipients, email_message.as_string())
         except:
             if not self.fail_silently:
                 raise

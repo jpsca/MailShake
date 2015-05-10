@@ -21,52 +21,56 @@ def test_extract_text_from_full_html():
   </style>
 </head>
 <body>
-  <p>Dear username,</p>
+  <p>Dear &username;</p>
 
   <p>In order to reset your password <br>
   just click the following link:</p>
 
-  <p><a href="http://example.com/reset/qwertyuiop">http://example.com/reset/qwertyuiop</a></p>
+  <p>&#xa7; <a href="http://example.com/reset/qwertyuiop">http://example.com/reset/qwertyuiop</a> &#xGhI;</p>
 
   <hr>
 
-  <p>Thank you.</p>
+  <p>Thank you.<br>
+  &#8212; Foo &amp; Bar.</p>
 </body>
 </html>"""
 
-    expected = """Dear username,
+    expected = u"""Dear &username;
 
 In order to reset your password
 just click the following link:
 
-http://example.com/reset/qwertyuiop
+§ http://example.com/reset/qwertyuiop &#xGhI;
 
-Thank you."""
+Thank you.
+— Foo & Bar."""
 
     text = extract_text_from_html(html)
     assert text == expected
 
 
 def test_extract_text_from_html_fragment():
-    html = """<p>Dear username,</p>
+    html = """<p>Dear &username;</p>
 
   <p>In order to reset your password <br>
   just click the following link:</p>
 
-  <p><a href="http://example.com/reset/qwertyuiop">http://example.com/reset/qwertyuiop</a></p>
+  <p>&#xa7; <a href="http://example.com/reset/qwertyuiop">http://example.com/reset/qwertyuiop</a> &#xGhI;</p>
 
   <hr>
 
-  <p>Thank you.</p>"""
+  <p>Thank you.<br>
+  &#8212; Foo &amp; Bar.</p>"""
 
-    expected = """Dear username,
+    expected = u"""Dear &username;
 
 In order to reset your password
 just click the following link:
 
-http://example.com/reset/qwertyuiop
+§ http://example.com/reset/qwertyuiop &#xGhI;
 
-Thank you."""
+Thank you.
+— Foo & Bar."""
 
     text = extract_text_from_html(html)
     assert text == expected

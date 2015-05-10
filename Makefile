@@ -23,13 +23,16 @@ clean-pyc:
 	find . -name '__pycache__' -exec rm -rf {} +
 
 test:
+	py.test -x tests
+
+testcov:
 	py.test --cov-config .coveragerc --cov mailshake tests/
 
 test-all:
 	tox
 
 coverage:
-	py.test --cov-config .coveragerc --cov-report html --cov mailshake tests/ 
+	py.test --cov-config .coveragerc --cov-report html --cov mailshake tests/
 	open htmlcov/index.html
 
 publish: clean

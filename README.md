@@ -1,13 +1,13 @@
 
 ![Mailshake logo](https://raw.github.com/lucuma/mailshake/master/docs/static/images/mailshake@2x.png)
 
-# mailshake
+# Mailshake
 
 [![Build Status](https://travis-ci.org/lucuma/MailShake.png)](https://travis-ci.org/lucuma/MailShake)
 
-Although Python makes sending email relatively easy via the smtplib module, this library provides a couple of light wrappers over it.
+Although Python makes sending email relatively easy via the smtplib module, these wrappers make sending email extra quick. They also make it easy to test email sending during development and to provide support for platforms that can’t use SMTP.
 
-These wrappers are provided to make sending email extra quick, to make it easy to test email sending during development, and to provide support for platforms that can’t use SMTP.
+Compatible with Python 3.4+, 2.6+ and pypy.
 
 Mailers availiable:
 

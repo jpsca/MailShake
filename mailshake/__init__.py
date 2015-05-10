@@ -4,9 +4,12 @@
 MailShake
 =================
 
-Although Python makes sending email relatively easy via the smtplib module, this library provides a couple of light wrappers over it.
+Although Python makes sending email relatively easy via the smtplib module,
+this library provides a couple of light wrappers over it.
 
-These wrappers are provided to make sending email extra quick, to make it easy to test email sending during development, and to provide support for platforms that can’t use SMTP.
+These wrappers are provided to make sending email extra quick, to make it easy
+to test email sending during development, and to provide support for platforms
+that can’t use SMTP.
 
 Usage::
 
@@ -62,12 +65,10 @@ from .mailers.dummy import DummyMailer  # noqa
 from .mailers.filebased import ToFileMailer  # noqa
 from .mailers.memory import ToMemoryMailer  # noqa
 from .mailers.smtp import SMTPMailer  # noqa
-
 from .mailers.amazon_ses import AmazonSESMailer  # noqa
-
 from .message import EmailMessage  # noqa
 
 
 Mailer = ToConsoleMailer
 
-__version__ = '0.9.8'
+__version__ = '0.10.0'

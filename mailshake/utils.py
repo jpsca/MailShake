@@ -6,7 +6,7 @@ import random
 import socket
 import time
 
-from .compat import string_types, to_unicode
+from . import _compat as compat
 
 
 class CachedDnsName(object):
@@ -26,8 +26,8 @@ DNS_NAME = CachedDnsName()
 
 
 def sanitize_address(addr, encoding):
-    if isinstance(addr, string_types):
-        addr = parseaddr(to_unicode(addr))
+    if isinstance(addr, compat.string_types):
+        addr = parseaddr(compat.force_text(addr))
     nm, addr = addr
     nm = str(Header(nm, encoding))
     try:
@@ -86,12 +86,14 @@ ADDRESS_HEADERS = set([
 def forbid_multi_line_headers(name, val, encoding='utf-8'):
     """Forbids multi-line headers, to prevent header injection.
     """
-    val = to_unicode(val)
+    val = compat.force_text(val)
     if '\n' in val or '\r' in val:
-        raise ValueError("Header values can't contain newlines' \
-            ' (got %r for header %r)" % (val, name))
+        raise ValueError(
+            "Header values can't contain newlines "
+            "(got {val} for header {name})".format(val=val, name=name)
+        )
     try:
-        val = val.encode('ascii')
+        val.encode('ascii')
     except UnicodeEncodeError:
         if name.lower() in ADDRESS_HEADERS:
             val = ', '.join([
@@ -99,9 +101,8 @@ def forbid_multi_line_headers(name, val, encoding='utf-8'):
                 for addr in getaddresses((val,))
             ])
         else:
-            val = str(Header(val, encoding))
+            val = Header(val, encoding).encode()
     else:
         if name.lower() == 'subject':
-            val = Header(val)
-    return name, val
-
+            val = Header(val).encode()
+    return str(name), val

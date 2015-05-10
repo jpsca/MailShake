@@ -1,5 +1,5 @@
 # coding=utf-8
-b'This library requires Python 2.7 or pypy'
+b'This library requires Python 3.4+, 2.7 or pypy'
 import io
 import os
 import re
@@ -80,8 +80,9 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 2.6',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ]

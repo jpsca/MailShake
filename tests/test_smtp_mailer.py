@@ -1,13 +1,20 @@
 # coding=utf-8
 from __future__ import print_function
 import asyncore
-import email
 import smtpd
 from smtplib import SMTPException
 import threading
 
+from mailshake._compat import PY3
 from mailshake import EmailMessage, SMTPMailer
 import pytest
+
+if PY3:
+    from email.utils import parseaddr
+    from email import message_from_bytes
+else:
+    from email.Utils import parseaddr
+    from email import message_from_string as message_from_bytes
 
 
 def make_emails():
@@ -18,7 +25,23 @@ def make_emails():
     ]
 
 
+class FakeSMTPChannel(smtpd.SMTPChannel):
+
+    def collect_incoming_data(self, data):
+        try:
+            super(FakeSMTPChannel, self).collect_incoming_data(data)
+        except UnicodeDecodeError:
+            # ignore decode error in SSL/TLS connection tests as we only care
+            # whether the connection attempt was made
+            pass
+
+
 class FakeSMTPServer(smtpd.SMTPServer, threading.Thread):
+    """
+    Asyncore SMTP server wrapped into a thread. Based on DummyFTPServer from:
+    http://svn.python.org/view/python/branches/py3k/Lib/test/test_ftplib.py?revision=86061&view=markup
+    """
+    channel_class = FakeSMTPChannel
 
     def __init__(self, *args, **kwargs):
         threading.Thread.__init__(self)
@@ -29,25 +52,22 @@ class FakeSMTPServer(smtpd.SMTPServer, threading.Thread):
         self.sink_lock = threading.Lock()
 
     def process_message(self, peer, mailfrom, rcpttos, data):
-        m = email.message_from_string(data)
-        maddr = email.Utils.parseaddr(m.get('from'))[1]
+        if PY3:
+            data = data.encode('utf-8')
+        m = message_from_bytes(data)
+        maddr = parseaddr(m.get('from'))[1]
         if mailfrom != maddr:
             return "553 '%s' != '%s'" % (mailfrom, maddr)
-        self.sink_lock.acquire()
-        self._sink.append(m)
-        self.sink_lock.release()
+        with self.sink_lock:
+            self._sink.append(m)
 
     def get_sink(self):
-        self.sink_lock.acquire()
-        try:
+        with self.sink_lock:
             return self._sink[:]
-        finally:
-            self.sink_lock.release()
 
     def flush_sink(self):
-        self.sink_lock.acquire()
-        self._sink[:] = []
-        self.sink_lock.release()
+        with self.sink_lock:
+            self._sink[:] = []
 
     def start(self):
         assert not self.active
@@ -59,15 +79,14 @@ class FakeSMTPServer(smtpd.SMTPServer, threading.Thread):
         self.active = True
         self.__flag.set()
         while self.active and asyncore.socket_map:
-            self.active_lock.acquire()
-            asyncore.loop(timeout=0.1, count=1)
-            self.active_lock.release()
+            with self.active_lock:
+                asyncore.loop(timeout=0.1, count=1)
         asyncore.close_all()
 
     def stop(self):
-        assert self.active
-        self.active = False
-        self.join()
+        if self.active:
+            self.active = False
+            self.join()
 
 
 server = None

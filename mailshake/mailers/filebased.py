@@ -6,14 +6,14 @@ import datetime
 import errno
 import os
 
+from .. import _compat as compat
 from .console import ToConsoleMailer
-from ..utils import string_types
 
 
 class ToFileMailer(ToConsoleMailer):
 
     def __init__(self, path, multifile=True, *args, **kwargs):
-        assert isinstance(path, string_types)
+        assert isinstance(path, compat.string_types)
         path = os.path.abspath(path)
         if os.path.isfile(path):
             path = os.path.dirname(path)

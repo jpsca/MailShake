@@ -8,7 +8,7 @@ import tempfile
 
 from mailshake import (
     EmailMessage, BaseMailer, DummyMailer, ToMemoryMailer, ToConsoleMailer, ToFileMailer)
-from mailshake.compat import StringIO
+from mailshake._compat import StringIO
 import pytest
 
 
