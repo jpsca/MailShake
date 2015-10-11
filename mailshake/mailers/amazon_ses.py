@@ -9,20 +9,21 @@ from .base import BaseMailer
 
 class AmazonSESMailer(BaseMailer):
     """A mailer for Amazon Simple Email Server.
-    Requires the `boto` python library.
+    Requires the `boto3` python library.
     """
 
     def __init__(self, aws_access_key_id, aws_secret_access_key,
                  return_path=None, *args, **kwargs):
         """
         """
-        from boto.ses.connection import SESConnection
+        import boto3
 
-        self.conn = SESConnection(
+        self.client = boto3.client(
+            'ses',
             aws_access_key_id=aws_access_key_id,
             aws_secret_access_key=aws_secret_access_key
         )
-        assert self.conn
+        assert self.client
         self.return_path = return_path
         super(AmazonSESMailer, self).__init__(*args, **kwargs)
 
@@ -35,18 +36,41 @@ class AmazonSESMailer(BaseMailer):
             return
 
         for msg in email_messages:
-            data = {
-                'source': msg.from_email,
-                'subject': msg.subject,
-                'body': msg.html or msg.text,
-                'to_addresses': msg.to,
-
-                'cc_addresses': msg.cc or None,
-                'bcc_addresses': msg.bcc or None,
-                'reply_addresses': msg.reply_to or None,
-                'format': 'html' if msg.html else 'text',
+            destination_data = {
+                'ToAddresses': msg.to,
             }
+            if msg.cc:
+                destination_data['CcAddresses'] = msg.cc
+            if msg.bcc:
+                destination_data['BccAddresses'] = msg.bcc
+
+            body_data = {
+                'Text': {
+                    'Data': msg.text,
+                    'Charset': 'utf8'
+                }
+            }
+            if msg.html:
+                body_data['Html'] = {
+                    'Data': msg.html,
+                    'Charset': 'utf8',
+                }
+
+            data = {
+                'Source': msg.from_email,
+                'Destination': destination_data,
+                'Message': {
+                    'Subject': {
+                        'Data': msg.subject,
+                        'Charset': 'utf8',
+                    },
+                    'Body': body_data,
+                },
+            }
+            if msg.reply_to:
+                data['ReplyAddresses'] = msg.reply_to
             if self.return_path:
-                data['return_path'] = self.return_path
+                data['ReturnPath'] = self.return_path
+
             logger.debug('Sending email from {0} to {1}'.format(msg.from_email, msg.to))
-            self.conn.send_email(**data)
+            self.client.send_email(**data)

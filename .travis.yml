@@ -1,9 +1,8 @@
 language: python
 python:
-  - "3.4"
+  - "3.5"
   - "2.7"
   - "pypy"
-  - "2.6"
-install: pip install -r requirements.txt
+install: pip install -r requirements-tests.txt
 script:  python setup.py test
 sudo: false
