@@ -13,7 +13,7 @@ class AmazonSESMailer(BaseMailer):
     """
 
     def __init__(self, aws_access_key_id, aws_secret_access_key,
-                 region_name='email.us-west', return_path=None, *args, **kwargs):
+                 region_name='us-east-1', return_path=None, *args, **kwargs):
         """
         """
         import boto3
