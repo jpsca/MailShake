@@ -13,7 +13,7 @@ class AmazonSESMailer(BaseMailer):
     """
 
     def __init__(self, aws_access_key_id, aws_secret_access_key,
-                 return_path=None, *args, **kwargs):
+                 region_name='email.us-west', return_path=None, *args, **kwargs):
         """
         """
         import boto3
@@ -21,7 +21,8 @@ class AmazonSESMailer(BaseMailer):
         self.client = boto3.client(
             'ses',
             aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key
+            aws_secret_access_key=aws_secret_access_key,
+            region_name=region_name
         )
         assert self.client
         self.return_path = return_path
