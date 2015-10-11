@@ -127,6 +127,22 @@ def test_sending():
     assert message.get('to') == 'to@example.com'
 
 
+def test_sending_unicode():
+    global server
+    server.flush_sink()
+
+    mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=False)
+    email = EmailMessage(
+        u'Olé',
+        u'Contenido en español',
+        u'from@example.com',
+        u'to@example.com'
+    )
+    assert mailer.send_messages(email)
+    sink = server.get_sink()
+    assert len(sink) == 1
+
+
 def test_notls():
     with pytest.raises(SMTPException):
         mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=True)

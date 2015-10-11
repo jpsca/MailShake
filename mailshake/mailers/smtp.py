@@ -119,7 +119,8 @@ class SMTPMailer(BaseMailer):
         ]
         try:
             self.connection.sendmail(
-                from_email, recipients, email_message.as_string())
+                from_email, recipients, email_message.as_bytes()
+            )
         except:
             if not self.fail_silently:
                 raise
