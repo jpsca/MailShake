@@ -1,13 +1,13 @@
 
-.. image:: https://raw.github.com/lucuma/mailshake/master/docs/static/images/mailshake@2x.png
+.. image:: https://raw.github.com/jpscaletti/mailshake/master/docs/static/images/mailshake@2x.png
    :alt: Mailshake logo
 
 ===========================
 Mailshake
 ===========================
 
-.. image:: https://travis-ci.org/lucuma/MailShake.svg?branch=master
-   :target: https://travis-ci.org/lucuma/MailShake
+.. image:: https://travis-ci.org/jpscaletti/MailShake.svg?branch=master
+   :target: https://travis-ci.org/jpscaletti/MailShake
    :alt: Build Status
 
 Although Python makes sending email relatively easy via the smtplib module, these wrappers make sending email extra quick. They also make it easy to test email sending during development and to provide support for platforms that can’t use SMTP.
@@ -63,9 +63,9 @@ You can also compose several messages and send them at the same time:
 Contributing
 ======================
 
-#. Check for `open issues <https://github.com/lucuma/Mailshake/issues>`_ or open
+#. Check for `open issues <https://github.com/jpscaletti/Mailshake/issues>`_ or open
    a fresh issue to start a discussion around a feature idea or a bug.
-#. Fork the `Mailshake repository on Github <https://github.com/lucuma/Mailshake>`_
+#. Fork the `Mailshake repository on Github <https://github.com/jpscaletti/Mailshake>`_
    to start making your changes.
 #. Write a test which shows that the bug was fixed or that the feature works
    as expected.
@@ -94,7 +94,7 @@ are touch by the tests::
 
     $  make coverage
 
-Our test suite `runs continuously on Travis CI <https://travis-ci.org/lucuma/Mailshake>`_ with every update.
+Our test suite `runs continuously on Travis CI <https://travis-ci.org/jpscaletti/Mailshake>`_ with every update.
 
 ______
 
