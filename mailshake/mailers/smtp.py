@@ -2,15 +2,19 @@
 """
     SMTP mailer.
 """
-import smtplib
-import ssl
-import threading
+try:
+    import smtplib
+    import ssl
+    import threading
+except ImportError:
+    pass
 
 from .base import BaseMailer
 from ..utils import sanitize_address, DNS_NAME
 
 
 class SMTPMailer(BaseMailer):
+
     """A wrapper that manages the SMTP network connection.
     """
 

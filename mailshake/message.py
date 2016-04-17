@@ -10,10 +10,13 @@ from email.utils import formatdate
 import mimetypes
 import os
 
+import html2text
+
 from . import _compat as compat
-from .html2text import extract_text_from_html
 from .utils import forbid_multi_line_headers, make_msgid
 
+
+textify = html2text.HTML2Text()
 
 # Don't BASE64-encode UTF-8 messages
 email.charset.add_charset('utf-8', email.charset.SHORTEST, None, 'utf-8')
@@ -26,6 +29,7 @@ DEFAULT_ATTACHMENT_MIME_TYPE = 'application/octet-stream'
 
 
 class MIMEMixin(object):
+
     def as_string(self, unixfrom=False):
         """Return the entire formatted message as a string.
         Optional `unixfrom' when True, means include the Unix From_ envelope
@@ -85,8 +89,10 @@ class SafeMIMEMultipart(MIMEMultipart, MIMEMixin):
 
 
 class EmailMessage(object):
+
     """A container for email information.
     """
+
     content_subtype = 'plain'
     mixed_subtype = 'mixed'
     html_subtype = 'html'
@@ -135,7 +141,7 @@ class EmailMessage(object):
         text = compat.force_text(text or text_content or '')
         html = compat.force_text(html or html_content or '')
         if html and not text:
-            text = extract_text_from_html(html)
+            text = textify.handle(html)
         self.text = text
         self.html = html
 
