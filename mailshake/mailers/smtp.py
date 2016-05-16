@@ -27,7 +27,8 @@ class SMTPMailer(BaseMailer):
             raise ValueError("EMAIL_USE_TLS/EMAIL_USE_SSL are mutually exclusive")
 
         self.connection = None
-        self._lock = threading.RLock()
+        # Some limited environments, like GAE, does not have a functional threading module
+        self._lock = threading.RLock() if threading else None
         super(SMTPMailer, self).__init__(*args, **kwargs)
 
     def open(self, hostname=None):
