@@ -96,7 +96,20 @@ class SMTPMailer(BaseMailer):
         """
         if not email_messages:
             return
-        with self._lock:
+        if self._lock:
+            with self._lock:
+                new_conn_created = self.open()
+                if not self.connection:
+                    # We failed silently on open(), trying to send would be pointless.
+                    return
+                num_sent = 0
+                for message in email_messages:
+                    sent = self._send(message)
+                    if sent:
+                        num_sent += 1
+                if new_conn_created:
+                    self.close()
+        else:
             new_conn_created = self.open()
             if not self.connection:
                 # We failed silently on open(), trying to send would be pointless.

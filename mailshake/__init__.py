@@ -71,4 +71,4 @@ from .message import EmailMessage  # noqa
 
 Mailer = ToConsoleMailer
 
-__version__ = '0.12.2'
+__version__ = '0.12.4'
