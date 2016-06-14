@@ -82,6 +82,12 @@ class SafeMIMEMultipart(MIMEMultipart, MIMEMixin):
     def __init__(self, _subtype='mixed', boundary=None, _subparts=None, encoding=None, **_params):
         self.encoding = encoding
         MIMEMultipart.__init__(self, _subtype, boundary, _subparts, **_params)
+        try:
+            import email.policy
+            # https://docs.python.org/3/library/email.policy.html
+            self.policy = email.policy.default
+        except ImportError:
+            pass
 
     def __setitem__(self, name, val):
         name, val = forbid_multi_line_headers(name, val, self.encoding)
