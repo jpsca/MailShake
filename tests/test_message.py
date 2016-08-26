@@ -103,6 +103,28 @@ def test_multiple_to_cc_bcc():
     ]
 
 
+def test_replyto():
+    email = EmailMessage('Subject', 'Content', 'from@example.com',
+                         reply_to='replyto@example.com')
+    message = email.render()
+
+    assert message['Reply-To'] == 'replyto@example.com'
+    assert not message['To']
+    assert not message['Cc']
+    assert email.get_recipients() == ['replyto@example.com']
+
+
+def test_multiple_replyto():
+    email = EmailMessage('Subject', 'Content', 'from@example.com',
+                         reply_to=['replyto@example.com', 'replyto.other@example.com'])
+    message = email.render()
+
+    assert message['Reply-To'] == 'replyto@example.com, replyto.other@example.com'
+    assert not message['To']
+    assert not message['Cc']
+    assert email.get_recipients() == ['replyto@example.com', 'replyto.other@example.com']
+
+
 def test_recipients_as_tuple():
     email = EmailMessage('Subject', 'Content', 'from@example.com',
                          to=('to@example.com', 'other@example.com'),
