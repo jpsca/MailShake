@@ -162,8 +162,8 @@ class EmailMessage(object):
         if self.cc:
             msg['Cc'] = u', '.join(self.cc)
 
-        if self.bcc:
-            msg['Bcc'] = u', '.join(self.bcc)
+        if self.reply_to:
+            msg['Reply-To'] = u', '.join(self.reply_to)
 
         # Email header names are case-insensitive (RFC 2045), so we have to
         # accommodate that when doing comparisons.
