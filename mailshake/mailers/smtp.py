@@ -2,12 +2,9 @@
 """
     SMTP mailer.
 """
-try:
-    import smtplib
-    import ssl
-    import threading
-except ImportError:
-    threading = None
+import smtplib
+import ssl
+
 
 from .base import BaseMailer
 from ..utils import sanitize_address, DNS_NAME
@@ -31,8 +28,6 @@ class SMTPMailer(BaseMailer):
             raise ValueError("EMAIL_USE_TLS/EMAIL_USE_SSL are mutually exclusive")
 
         self.connection = None
-        # Some limited environments, like GAE, does not have a functional threading module
-        self._lock = threading.RLock() if threading else None
         super(SMTPMailer, self).__init__(*args, **kwargs)
 
     def open(self, hostname=None):
@@ -96,31 +91,17 @@ class SMTPMailer(BaseMailer):
         """
         if not email_messages:
             return
-        if self._lock:
-            with self._lock:
-                new_conn_created = self.open()
-                if not self.connection:
-                    # We failed silently on open(), trying to send would be pointless.
-                    return
-                num_sent = 0
-                for message in email_messages:
-                    sent = self._send(message)
-                    if sent:
-                        num_sent += 1
-                if new_conn_created:
-                    self.close()
-        else:
-            new_conn_created = self.open()
-            if not self.connection:
-                # We failed silently on open(), trying to send would be pointless.
-                return
-            num_sent = 0
-            for message in email_messages:
-                sent = self._send(message)
-                if sent:
-                    num_sent += 1
-            if new_conn_created:
-                self.close()
+        new_conn_created = self.open()
+        if not self.connection:
+            # We failed silently on open(), trying to send would be pointless.
+            return
+        num_sent = 0
+        for message in email_messages:
+            sent = self._send(message)
+            if sent:
+                num_sent += 1
+        if new_conn_created:
+            self.close()
         return num_sent
 
     def _send(self, email_message):
