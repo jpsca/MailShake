@@ -7,7 +7,11 @@ import ssl
 
 
 from .base import BaseMailer
-from ..utils import sanitize_address, DNS_NAME
+from ..utils import DNS_NAME
+
+
+def chunker(seq, size):
+    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
 
 class SMTPMailer(BaseMailer):
@@ -104,22 +108,26 @@ class SMTPMailer(BaseMailer):
             self.close()
         return num_sent
 
-    def _send(self, email_message):
+    def _send(self, message):
         """A helper method that does the actual sending.
         """
-        recipients = email_message.get_recipients()
+        recipients = message.get_recipients()
         if not recipients:
             return False
-        from_email = email_message.from_email or self.default_from
-        from_email = sanitize_address(from_email, email_message.encoding)
-        recipients = [
-            sanitize_address(addr, email_message.encoding)
-            for addr in recipients
-        ]
+        from_email = message.from_email or self.default_from
+        to_set = set(message.to)
+        cc_set = set(message.cc)
+        bcc_set = set(message.bcc)
         try:
-            self.connection.sendmail(
-                from_email, recipients, email_message.as_bytes()
-            )
+            # SMTP has a limit of 1000 recipients per email
+            for group in chunker(recipients, 1000):
+                group_set = set(group)
+                message.to = list(to_set.intersection(group_set))
+                message.cc = list(cc_set.intersection(group_set))
+                message.bcc = list(bcc_set.intersection(group_set))
+                self.connection.sendmail(
+                    from_email, group, message.as_bytes()
+                )
         except:
             if not self.fail_silently:
                 raise

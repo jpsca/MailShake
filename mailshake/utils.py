@@ -22,10 +22,11 @@ class CachedDnsName(object):
             self._fqdn = socket.getfqdn()
         return self._fqdn
 
+
 DNS_NAME = CachedDnsName()
 
 
-def sanitize_address(addr, encoding):
+def sanitize_address(addr, encoding='utf8'):
     if isinstance(addr, compat.string_types):
         addr = parseaddr(compat.force_text(addr))
     nm, addr = addr

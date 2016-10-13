@@ -13,7 +13,7 @@ import os
 import html2text
 
 from . import _compat as compat
-from .utils import forbid_multi_line_headers, make_msgid
+from .utils import sanitize_address, forbid_multi_line_headers, make_msgid
 
 
 textify = html2text.HTML2Text()
@@ -103,12 +103,11 @@ class EmailMessage(object):
     mixed_subtype = 'mixed'
     html_subtype = 'html'
     alternative_subtype = 'alternative'
-    encoding = 'utf-8'
 
     def __init__(self, subject='', text='', from_email=None, to=None,
                  cc=None, bcc=None, reply_to=None,
                  html=None, attachments=None, headers=None,
-                 text_content=None, html_content=None):
+                 text_content=None, html_content=None, encoding='utf-8'):
         """Initialize a single email message (which can be sent to multiple
         recipients).
 
@@ -119,25 +118,37 @@ class EmailMessage(object):
         `text_content` and `html_content` parameters exists for backwards
         compatibility. Use `text` and `html` instead.
         """
+        self.encoding = encoding
         to = to or []
         if isinstance(to, compat.string_types):
             to = [to]
-        self.to = [compat.force_text(_to) for _to in list(to)]
-
+        self.to = [
+            sanitize_address(compat.force_text(_to), encoding)
+            for _to in list(to)
+        ]
         cc = cc or []
         if isinstance(cc, compat.string_types):
             cc = [cc]
-        self.cc = [compat.force_text(_cc) for _cc in list(cc)]
+        self.cc = [
+            sanitize_address(compat.force_text(_cc), encoding)
+            for _cc in list(cc)
+        ]
 
         bcc = bcc or []
         if isinstance(bcc, compat.string_types):
             bcc = [bcc]
-        self.bcc = [compat.force_text(_bcc) for _bcc in list(bcc)]
+        self.bcc = [
+            sanitize_address(compat.force_text(_bcc), encoding)
+            for _bcc in list(bcc)
+        ]
 
         reply_to = reply_to or []
         if isinstance(reply_to, compat.string_types):
             reply_to = [reply_to]
-        self.reply_to = [compat.force_text(rt) for rt in list(reply_to)]
+        self.reply_to = [
+            sanitize_address(compat.force_text(rt), encoding)
+            for rt in list(reply_to)
+        ]
 
         self.from_email = from_email
         self.subject = subject

@@ -7,9 +7,10 @@ MailShake
 Although Python makes sending email relatively easy via the smtplib module,
 this library provides a couple of light wrappers over it.
 
-These wrappers are provided to make sending email extra quick, to make it easy
-to test email sending during development, and to provide support for platforms
-that can’t use SMTP.
+Did you know SMTP has a limit of 1000 recipients per email? This library does ;)
+
+These wrappers make sending email extra quick, easy to test email sending during
+development, and provides support for platforms that can’t use SMTP.
 
 Usage::
 
@@ -71,4 +72,4 @@ from .message import EmailMessage  # noqa
 
 Mailer = ToConsoleMailer
 
-__version__ = '0.13.0'
+__version__ = '0.14.0'
