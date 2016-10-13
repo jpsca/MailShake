@@ -105,89 +105,93 @@ def teardown_module():
         server.stop()
 
 
-# def test_sending():
-#     global server
-#     server.flush_sink()
+def test_sending():
+    global server
+    server.flush_sink()
 
-#     mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=False)
-#     email1, email2, email3, email4 = make_emails()
+    mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=False)
+    email1, email2, email3, email4 = make_emails()
 
-#     assert mailer.send_messages(email1) == 1
-#     assert mailer.send_messages(email2, email3) == 2
-#     assert mailer.send_messages(email4) == 1
+    assert mailer.send_messages(email1) == 1
+    assert mailer.send_messages(email2, email3) == 2
+    assert mailer.send_messages(email4) == 1
 
-#     sink = server.get_sink()
-#     assert len(sink) == 4
+    sink = server.get_sink()
+    assert len(sink) == 4
 
-#     message = sink[0]
-#     print(message)
-#     assert message.get_content_type() == 'text/plain'
-#     assert message.get('subject') == 'Subject-1'
-#     assert message.get('from') == 'from@example.com'
-#     assert message.get('to') == 'to@example.com'
-
-
-# def test_sending_unicode():
-#     global server
-#     server.flush_sink()
-
-#     mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=False)
-#     email = EmailMessage(
-#         u'Olé',
-#         u'Contenido en español',
-#         u'from@example.com',
-#         u'to@example.com'
-#     )
-#     assert mailer.send_messages(email)
-#     sink = server.get_sink()
-#     assert len(sink) == 1
+    message = sink[0]
+    print(message)
+    assert message.get_content_type() == 'text/plain'
+    assert message.get('subject') == 'Subject-1'
+    assert message.get('from') == 'from@example.com'
+    assert message.get('to') == 'to@example.com'
 
 
-# def test_notls():
-#     with pytest.raises(SMTPException):
-#         mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=True)
-#         mailer.open()
+def test_sending_unicode():
+    global server
+    server.flush_sink()
+
+    mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=False)
+    email = EmailMessage(
+        u'Olé',
+        u'Contenido en español',
+        u'from@example.com',
+        u'to@example.com'
+    )
+    assert mailer.send_messages(email)
+    sink = server.get_sink()
+    assert len(sink) == 1
 
 
-# def test_wrong_host():
-#     with pytest.raises(Exception):
-#         mailer = SMTPMailer(host='123', port=8000, use_tls=False)
-#         mailer.open()
+def test_notls():
+    with pytest.raises(SMTPException):
+        mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=True)
+        mailer.open()
 
 
-# def test_wrong_port():
-#     with pytest.raises(Exception):
-#         mailer = SMTPMailer(host='127.0.0.1', port=3000, use_tls=False)
-#         mailer.open()
+def test_wrong_host():
+    with pytest.raises(Exception):
+        mailer = SMTPMailer(host='123', port=8000, use_tls=False)
+        mailer.open()
 
 
-# def test_fail_silently():
-#     mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=True,
-#                         fail_silently=True)
-#     mailer.open()
+def test_wrong_port():
+    with pytest.raises(Exception):
+        mailer = SMTPMailer(host='127.0.0.1', port=3000, use_tls=False)
+        mailer.open()
 
-#     mailer = SMTPMailer(host='123', port=8000, use_tls=False,
-#                         fail_silently=True)
-#     mailer.open()
 
-#     mailer = SMTPMailer(host='127.0.0.1', port=3000, use_tls=False,
-#                         fail_silently=True)
-#     mailer.open()
+def test_fail_silently():
+    mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=True,
+                        fail_silently=True)
+    mailer.open()
+
+    mailer = SMTPMailer(host='123', port=8000, use_tls=False,
+                        fail_silently=True)
+    mailer.open()
+
+    mailer = SMTPMailer(host='127.0.0.1', port=3000, use_tls=False,
+                        fail_silently=True)
+    mailer.open()
 
 
 def test_batch_too_many_recipients():
     global server
     server.flush_sink()
 
-    mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=False)
+    mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=False, max_recipients=200)
     send_to = ['user{}@example.com'.format(i) for i in range(1, 1501)]
     msg = EmailMessage('The Subject', 'Content', 'from@example.com', send_to)
 
     assert mailer.send_messages(msg) == 1
     sink = server.get_sink()
-    assert len(sink) == 2
+    assert len(sink) == 8
 
-    email1 = sink[0]
-    email2 = sink[1]
-    assert len(email1.get('to').split(',')) == 1000
-    assert len(email2.get('to').split(',')) == 500
+    assert len(sink[0].get('to').split(',')) == 200
+    assert len(sink[1].get('to').split(',')) == 200
+    assert len(sink[2].get('to').split(',')) == 200
+    assert len(sink[3].get('to').split(',')) == 200
+    assert len(sink[4].get('to').split(',')) == 200
+    assert len(sink[5].get('to').split(',')) == 200
+    assert len(sink[6].get('to').split(',')) == 200
+    assert len(sink[7].get('to').split(',')) == 100

@@ -10,7 +10,11 @@ Mailshake
    :target: https://travis-ci.org/jpscaletti/MailShake
    :alt: Build Status
 
-Although Python makes sending email relatively easy via the smtplib module, these wrappers make sending email extra quick. They also make it easy to test email sending during development and to provide support for platforms that can’t use SMTP.
+Although Python makes sending email relatively easy via the smtplib module,
+this library provides a couple of light wrappers over it.
+
+These wrappers make sending email extra quick, easy to test email sending during
+development, and provides support for platforms that can’t use SMTP.
 
 *Compatible with Python 3.4+, 2.6+ and pypy.*
 

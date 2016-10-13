@@ -17,10 +17,16 @@ def chunker(seq, size):
 class SMTPMailer(BaseMailer):
 
     """A wrapper that manages the SMTP network connection.
+
+    `max_recipients`: Number of maximum recipients per mesage
+        Mailshake send several messages instead of one, in order to stay inside
+        that limit.
+
     """
 
     def __init__(self, host='localhost', port=587, username=None, password=None,
-                 use_tls=None, use_ssl=None, timeout=None, *args, **kwargs):
+                 use_tls=None, use_ssl=None, timeout=None, max_recipients=200,
+                 *args, **kwargs):
         self.host = host
         self.port = port
         self.username = username
@@ -32,6 +38,7 @@ class SMTPMailer(BaseMailer):
             raise ValueError("EMAIL_USE_TLS/EMAIL_USE_SSL are mutually exclusive")
 
         self.connection = None
+        self.max_recipients = max_recipients
         super(SMTPMailer, self).__init__(*args, **kwargs)
 
     def open(self, hostname=None):
@@ -119,8 +126,8 @@ class SMTPMailer(BaseMailer):
         cc_set = set(message.cc)
         bcc_set = set(message.bcc)
         try:
-            # SMTP has a limit of 1000 recipients per email
-            for group in chunker(recipients, 1000):
+            # Your SMTP provider has limits!
+            for group in chunker(recipients, self.max_recipients):
                 group_set = set(group)
                 message.to = list(to_set.intersection(group_set))
                 message.cc = list(cc_set.intersection(group_set))
