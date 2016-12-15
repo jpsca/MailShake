@@ -132,9 +132,12 @@ class SMTPMailer(BaseMailer):
                 message.to = list(to_set.intersection(group_set))
                 message.cc = list(cc_set.intersection(group_set))
                 message.bcc = list(bcc_set.intersection(group_set))
-                self.connection.sendmail(
-                    from_email, group, message.as_bytes()
-                )
+                try:
+                    self.connection.sendmail(from_email, group, message.as_bytes())
+                except smtplib.SMTPServerDisconnected:
+                    self.connection = None
+                    self.open()
+                    self.connection.sendmail(from_email, group, message.as_bytes())
         except:
             if not self.fail_silently:
                 raise
