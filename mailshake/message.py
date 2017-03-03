@@ -107,7 +107,8 @@ class EmailMessage(object):
     def __init__(self, subject='', text='', from_email=None, to=None,
                  cc=None, bcc=None, reply_to=None,
                  html=None, attachments=None, headers=None,
-                 text_content=None, html_content=None, encoding='utf-8'):
+                 text_content=None, html_content=None,
+                 encoding='utf-8', tags=None):
         """Initialize a single email message (which can be sent to multiple
         recipients).
 
@@ -117,6 +118,8 @@ class EmailMessage(object):
 
         `text_content` and `html_content` parameters exists for backwards
         compatibility. Use `text` and `html` instead.
+
+        `tags` are ignored unless the mailer supports them (eg. Amazon SES)
         """
         self.encoding = encoding
         to = to or []
@@ -161,6 +164,7 @@ class EmailMessage(object):
             text = textify.handle(html)
         self.text = text
         self.html = html
+        self.tags = tags
 
     def render(self):
         msg = self._create_message()

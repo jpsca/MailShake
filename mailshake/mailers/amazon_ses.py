@@ -69,7 +69,9 @@ class AmazonSESMailer(BaseMailer):
                 },
             }
             if msg.reply_to:
-                data['ReplyAddresses'] = msg.reply_to
+                data['ReplyToAddresses'] = msg.reply_to
+            if msg.tags:
+                data['Tags'] = msg.tags
             if self.return_path:
                 data['ReturnPath'] = self.return_path
 
