@@ -399,3 +399,14 @@ def test_8bit_no_quoted_printable():
 
     assert 'Content-Transfer-Encoding: quoted-printable' not in msg
     assert 'Content-Transfer-Encoding: 8bit' in msg
+
+
+def test_invalid_destination():
+    email = EmailMessage('Subject', 'Content', 'from@example.com',
+                         'toБ@example.com')
+    message = email.render()
+
+    assert message['Subject'] == 'Subject'
+    assert message.get_payload() == 'Content'
+    assert message['From'] == 'from@example.com'
+    assert message['To'] == 'to@example.com'
