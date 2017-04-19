@@ -36,10 +36,10 @@ class FakeSMTPServer(smtpd.SMTPServer):
         localaddr = (host, port)
         remoteaddr = None
         super(FakeSMTPServer, self).__init__(localaddr, remoteaddr)
-        self.sink = []
+        self.flush_sink()
 
     def flush_sink(self):
-        pass
+        self.sink = []
 
     def process_message(self, peer, from_, to, bmessage, **kwargs):
         self.sink.append(message_from_bytes(bmessage))

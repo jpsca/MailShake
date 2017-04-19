@@ -1,6 +1,12 @@
 # coding=utf-8
+"""
+Adapted from Django (http://djangoproject.com).
+The original code was BSD licensed (see LICENSE)
+"""
+from email.errors import InvalidHeaderDefect, NonASCIILocalPartDefect
 from email.header import Header
-from email.utils import formataddr, parseaddr, getaddresses
+from email.headerregistry import Address
+from email.utils import parseaddr, getaddresses
 import os
 import random
 import socket
@@ -26,22 +32,54 @@ class CachedDnsName(object):
 DNS_NAME = CachedDnsName()
 
 
-def sanitize_address(addr, encoding='utf8'):
-    if isinstance(addr, compat.string_types):
+def split_addr(addr, encoding):
+    """
+    Split the address into local part and domain and encode them.
+    When non-ascii characters are present in the local part, it must be
+    MIME-word encoded. The domain name must be idna-encoded if it contains
+    non-ascii characters.
+    """
+    if '@' in addr:
+        localpart, domain = addr.split('@', 1)
+        # Try to get the simplest encoding - ascii if possible so that
+        # to@example.com doesn't become =?utf-8?q?to?=@example.com. This
+        # makes unit testing a bit easier and more readable.
+        try:
+            localpart.encode('ascii')
+        except UnicodeEncodeError:
+            localpart = Header(localpart, encoding).encode()
+        domain = domain.encode('idna').decode('ascii')
+    else:
+        localpart = Header(addr, encoding).encode()
+        domain = ''
+    return (localpart, domain)
+
+
+def sanitize_address(addr, encoding):
+    """Format a pair of (name, address) or an email address string.
+    """
+    if not isinstance(addr, tuple):
         addr = parseaddr(compat.force_text(addr))
     nm, addr = addr
-    nm = str(Header(nm, encoding))
+    localpart, domain = None, None
+    nm = Header(nm, encoding).encode()
     try:
         addr.encode('ascii')
-    except UnicodeEncodeError:  # IDN
-        if u'@' in addr:
-            localpart, domain = addr.split(u'@', 1)
-            localpart = str(Header(localpart, encoding))
-            domain = domain.encode('idna')
-            addr = '@'.join([localpart, domain])
-        else:
-            addr = str(Header(addr, encoding))
-    return formataddr((nm, addr))
+    except UnicodeEncodeError:  # IDN or non-ascii in the local part
+        localpart, domain = split_addr(addr, encoding)
+
+    # An `email.headerregistry.Address` object is used since
+    # email.utils.formataddr() naively encodes the name as ascii (see #25986).
+    if localpart and domain:
+        address = Address(nm, username=localpart, domain=domain)
+        return str(address)
+
+    try:
+        address = Address(nm, addr_spec=addr)
+    except (InvalidHeaderDefect, NonASCIILocalPartDefect):
+        localpart, domain = split_addr(addr, encoding)
+        address = Address(nm, username=localpart, domain=domain)
+    return str(address)
 
 
 def make_msgid(idstring=None):
@@ -64,7 +102,7 @@ def make_msgid(idstring=None):
     else:
         idstring = '.' + idstring
     idhost = DNS_NAME
-    msgid = '<%s.%s.%s%s@%s>' % (utcdate, pid, randint, idstring, idhost)
+    msgid = '<{}.{}.{}@{}>'.format(utcdate, pid, randint, idstring, idhost)
     return msgid
 
 
