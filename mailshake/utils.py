@@ -3,9 +3,7 @@
 Adapted from Django (http://djangoproject.com).
 The original code was BSD licensed (see LICENSE)
 """
-from email.errors import InvalidHeaderDefect, NonASCIILocalPartDefect
 from email.header import Header
-from email.headerregistry import Address
 from email.utils import parseaddr, getaddresses
 import os
 import random
@@ -34,7 +32,8 @@ DNS_NAME = CachedDnsName()
 
 def split_addr(addr, encoding):
     """
-    Split the address into local part and domain and encode them.
+    Split the address into local part and domain, properly encoded.
+
     When non-ascii characters are present in the local part, it must be
     MIME-word encoded. The domain name must be idna-encoded if it contains
     non-ascii characters.
@@ -56,7 +55,8 @@ def split_addr(addr, encoding):
 
 
 def sanitize_address(addr, encoding):
-    """Format a pair of (name, address) or an email address string.
+    """
+    Format a pair of (name, address) or an email address string.
     """
     if not isinstance(addr, tuple):
         addr = parseaddr(compat.force_text(addr))
@@ -68,8 +68,18 @@ def sanitize_address(addr, encoding):
     except UnicodeEncodeError:  # IDN or non-ascii in the local part
         localpart, domain = split_addr(addr, encoding)
 
-    # An `email.headerregistry.Address` object is used since
+    if compat.PY2:
+        # On Python 2, use the stdlib since `email.headerregistry` doesn't exist.
+        from email.utils import formataddr
+        if localpart and domain:
+            addr = '@'.join([localpart, domain])
+        return formataddr((nm, addr))
+
+    # On Python 3, an `email.headerregistry.Address` object is used since
     # email.utils.formataddr() naively encodes the name as ascii (see #25986).
+    from email.headerregistry import Address
+    from email.errors import InvalidHeaderDefect, NonASCIILocalPartDefect
+
     if localpart and domain:
         address = Address(nm, username=localpart, domain=domain)
         return str(address)

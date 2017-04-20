@@ -35,7 +35,7 @@ class FakeSMTPServer(smtpd.SMTPServer):
         print('Running fake SMTP server')
         localaddr = (host, port)
         remoteaddr = None
-        super(FakeSMTPServer, self).__init__(localaddr, remoteaddr)
+        smtpd.SMTPServer.__init__(self, localaddr, remoteaddr)
         self.flush_sink()
 
     def flush_sink(self):
