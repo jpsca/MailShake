@@ -10,10 +10,8 @@ from mailshake import EmailMessage, SMTPMailer
 import pytest
 
 if PY3:
-    from email.utils import parseaddr
     from email import message_from_bytes
 else:
-    from email.Utils import parseaddr
     from email import message_from_string as message_from_bytes
 
 
@@ -25,98 +23,64 @@ def make_emails():
     ]
 
 
-class FakeSMTPChannel(smtpd.SMTPChannel):
-
-    def collect_incoming_data(self, data):
-        try:
-            super(FakeSMTPChannel, self).collect_incoming_data(data)
-        except UnicodeDecodeError:
-            # ignore decode error in SSL/TLS connection tests as we only care
-            # whether the connection attempt was made
-            pass
+smtp_server = None
+SMTP_HOST = '127.0.0.1'
+SMTP_PORT = 8000
 
 
-class FakeSMTPServer(smtpd.SMTPServer, threading.Thread):
-    """
-    Asyncore SMTP server wrapped into a thread. Based on DummyFTPServer from:
-    http://svn.python.org/view/python/branches/py3k/Lib/test/test_ftplib.py?revision=86061&view=markup
-    """
-    channel_class = FakeSMTPChannel
+class FakeSMTPServer(smtpd.SMTPServer):
+    """A Fake smtp server"""
 
-    def __init__(self, *args, **kwargs):
-        threading.Thread.__init__(self)
-        smtpd.SMTPServer.__init__(self, *args, **kwargs)
-        self._sink = []
-        self.active = False
-        self.active_lock = threading.Lock()
-        self.sink_lock = threading.Lock()
-
-    def process_message(self, peer, mailfrom, rcpttos, data):
-        if PY3:
-            data = data.encode('utf-8')
-        m = message_from_bytes(data)
-        maddr = parseaddr(m.get('from'))[1]
-        if mailfrom != maddr:
-            return "553 '%s' != '%s'" % (mailfrom, maddr)
-        with self.sink_lock:
-            self._sink.append(m)
-
-    def get_sink(self):
-        with self.sink_lock:
-            return self._sink[:]
+    def __init__(self, host, port):
+        print('Running fake SMTP server')
+        localaddr = (host, port)
+        remoteaddr = None
+        smtpd.SMTPServer.__init__(self, localaddr, remoteaddr)
+        self.flush_sink()
 
     def flush_sink(self):
-        with self.sink_lock:
-            self._sink[:] = []
+        self.sink = []
+
+    def process_message(self, peer, from_, to, bmessage, **kwargs):
+        self.sink.append(message_from_bytes(bmessage))
 
     def start(self):
-        assert not self.active
-        self.__flag = threading.Event()
-        threading.Thread.start(self)
-        self.__flag.wait()
-
-    def run(self):
-        self.active = True
-        self.__flag.set()
-        while self.active and asyncore.socket_map:
-            with self.active_lock:
-                asyncore.loop(timeout=0.1, count=1)
-        asyncore.close_all()
+        # timeout parameter is important, otherwise code will block 30 seconds after
+        # the SMTP channel has been closed
+        self.thread = threading.Thread(target=asyncore.loop, kwargs={'timeout': 0.1})
+        self.thread.start()
 
     def stop(self):
-        if self.active:
-            self.active = False
-            self.join()
-
-
-server = None
+        # close the SMTPserver to ensure no channels connect to asyncore
+        self.close()
+        # now it is save to wait for the thread to finish, i.e. for asyncore.loop() to exit
+        self.thread.join()
 
 
 def setup_module():
-    global server
-    server = FakeSMTPServer(('127.0.0.1', 8000), None)
-    server.start()
+    global smtp_server
+    smtp_server = FakeSMTPServer(SMTP_HOST, SMTP_PORT)
+    smtp_server.start()
 
 
 def teardown_module():
-    global server
-    if server is not None:
-        server.flush_sink()
-        server.stop()
+    global smtp_server
+    if smtp_server is not None:
+        smtp_server.stop()
 
 
 def test_sending():
-    global server
-    server.flush_sink()
+    global smtp_server
+    smtp_server.flush_sink()
 
-    mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=False)
+    mailer = SMTPMailer(host=SMTP_HOST, port=SMTP_PORT, use_tls=False)
     email1, email2, email3, email4 = make_emails()
 
     assert mailer.send_messages(email1) == 1
     assert mailer.send_messages(email2, email3) == 2
     assert mailer.send_messages(email4) == 1
 
-    sink = server.get_sink()
+    sink = smtp_server.sink
     assert len(sink) == 4
 
     message = sink[0]
@@ -128,18 +92,18 @@ def test_sending():
 
 
 def test_sending_unicode():
-    global server
-    server.flush_sink()
+    global smtp_server
+    smtp_server.flush_sink()
 
     mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=False)
     email = EmailMessage(
         u'Olé',
         u'Contenido en español',
         u'from@example.com',
-        u'to@example.com'
+        u'toБ@example.com'
     )
     assert mailer.send_messages(email)
-    sink = server.get_sink()
+    sink = smtp_server.sink
     assert len(sink) == 1
 
 
@@ -176,15 +140,15 @@ def test_fail_silently():
 
 
 def test_batch_too_many_recipients():
-    global server
-    server.flush_sink()
+    global smtp_server
+    smtp_server.flush_sink()
 
     mailer = SMTPMailer(host='127.0.0.1', port=8000, use_tls=False, max_recipients=200)
     send_to = ['user{}@example.com'.format(i) for i in range(1, 1501)]
     msg = EmailMessage('The Subject', 'Content', 'from@example.com', send_to)
 
     assert mailer.send_messages(msg) == 1
-    sink = server.get_sink()
+    sink = smtp_server.sink
     assert len(sink) == 8
 
     assert len(sink[0].get('to').split(',')) == 200

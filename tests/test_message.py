@@ -283,7 +283,7 @@ def test_safe_mime_multipart():
     email = EmailMessage(subject, text_content, from_email, to,
                          html_content=html_content, headers=headers)
     email.encoding = 'iso-8859-1'
-    message = email.render()
+    email.render()
 
 
 def test_encoding():
