@@ -36,6 +36,8 @@ class AmazonSESMailer(BaseMailer):
             logger.debug('No email messages to send')
             return
 
+        responses = []
+
         for msg in email_messages:
             destination_data = {
                 'ToAddresses': msg.to,
@@ -76,4 +78,8 @@ class AmazonSESMailer(BaseMailer):
                 data['ReturnPath'] = self.return_path
 
             logger.debug('Sending email from {0} to {1}'.format(msg.from_email, msg.to))
-            self.client.send_email(**data)
+            response = self.client.send_email(**data)
+            responses.append(response)
+
+        return responses
+
