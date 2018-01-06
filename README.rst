@@ -98,7 +98,7 @@ are touch by the tests::
 
     $  make coverage
 
-Our test suite `runs continuously on Travis CI <https://travis-ci.org/jpscaletti/Mailshake>`_ with every update.
+Our test suite `runs continuously on Travis CI <https://travis-ci.org/jpscaletti/MailShake>`_ with every update.
 
 ______
 
