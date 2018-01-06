@@ -402,11 +402,11 @@ def test_8bit_no_quoted_printable():
 
 
 def test_invalid_destination():
-    email = EmailMessage('Subject', 'Content', 'from@example.com',
-                         'toБ@example.com')
+    dest = 'toБ@example.com'
+    email = EmailMessage('Subject', 'Content', 'from@example.com', dest)
     message = email.render()
 
     assert message['Subject'] == 'Subject'
     assert message.get_payload() == 'Content'
     assert message['From'] == 'from@example.com'
-    assert message['To'] == 'to@example.com'
+    assert message['To'] != dest
