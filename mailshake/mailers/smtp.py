@@ -71,7 +71,7 @@ class SMTPMailer(BaseMailer):
             if self.username and self.password:
                 self.connection.login(self.username, self.password)
 
-        except:
+        except Exception:
             if not self.fail_silently:
                 raise
 
@@ -90,7 +90,7 @@ class SMTPMailer(BaseMailer):
                 # sometimes, or when the connection was already disconnected
                 # by the server.
                 self.connection.close()
-            except:
+            except Exception:
                 if not self.fail_silently:
                     raise
         finally:
@@ -138,7 +138,7 @@ class SMTPMailer(BaseMailer):
                     self.connection = None
                     self.open()
                     self.connection.sendmail(from_email, group, message.as_bytes())
-        except:
+        except Exception:
             if not self.fail_silently:
                 raise
             return False
