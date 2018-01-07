@@ -4,5 +4,5 @@ python:
   - "3.5"
   - "2.7"
 install: pip install -r requirements-tests.txt
-script:  python setup.py test
+script:  py.test -x tests
 sudo: false
