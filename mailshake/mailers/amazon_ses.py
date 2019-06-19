@@ -1,4 +1,3 @@
-# coding=utf-8
 """
     Mailer for Amazon Simple Email Server.
 """
@@ -12,17 +11,24 @@ class AmazonSESMailer(BaseMailer):
     Requires the `boto3` python library.
     """
 
-    def __init__(self, aws_access_key_id, aws_secret_access_key,
-                 region_name='us-east-1', return_path=None, *args, **kwargs):
+    def __init__(
+        self,
+        aws_access_key_id,
+        aws_secret_access_key,
+        region_name="us-east-1",
+        return_path=None,
+        *args,
+        **kwargs
+    ):
         """
         """
         import boto3
 
         self.client = boto3.client(
-            'ses',
+            "ses",
             aws_access_key_id=aws_access_key_id,
             aws_secret_access_key=aws_secret_access_key,
-            region_name=region_name
+            region_name=region_name,
         )
         assert self.client
         self.return_path = return_path
@@ -31,55 +37,41 @@ class AmazonSESMailer(BaseMailer):
     def send_messages(self, *email_messages):
         """
         """
-        logger = logging.getLogger('mailshake:AmazonSESMailer')
+        logger = logging.getLogger("mailshake:AmazonSESMailer")
         if not email_messages:
-            logger.debug('No email messages to send')
+            logger.debug("No email messages to send")
             return
 
         responses = []
 
         for msg in email_messages:
-            destination_data = {
-                'ToAddresses': msg.to,
-            }
+            destination_data = {"ToAddresses": msg.to}
             if msg.cc:
-                destination_data['CcAddresses'] = msg.cc
+                destination_data["CcAddresses"] = msg.cc
             if msg.bcc:
-                destination_data['BccAddresses'] = msg.bcc
+                destination_data["BccAddresses"] = msg.bcc
 
-            body_data = {
-                'Text': {
-                    'Data': msg.text,
-                    'Charset': 'utf8'
-                }
-            }
+            body_data = {"Text": {"Data": msg.text, "Charset": "utf8"}}
             if msg.html:
-                body_data['Html'] = {
-                    'Data': msg.html,
-                    'Charset': 'utf8',
-                }
+                body_data["Html"] = {"Data": msg.html, "Charset": "utf8"}
 
             data = {
-                'Source': msg.from_email,
-                'Destination': destination_data,
-                'Message': {
-                    'Subject': {
-                        'Data': msg.subject,
-                        'Charset': 'utf8',
-                    },
-                    'Body': body_data,
+                "Source": msg.from_email,
+                "Destination": destination_data,
+                "Message": {
+                    "Subject": {"Data": msg.subject, "Charset": "utf8"},
+                    "Body": body_data,
                 },
             }
             if msg.reply_to:
-                data['ReplyToAddresses'] = msg.reply_to
+                data["ReplyToAddresses"] = msg.reply_to
             if msg.tags:
-                data['Tags'] = msg.tags
+                data["Tags"] = msg.tags
             if self.return_path:
-                data['ReturnPath'] = self.return_path
+                data["ReturnPath"] = self.return_path
 
-            logger.debug('Sending email from {0} to {1}'.format(msg.from_email, msg.to))
+            logger.debug("Sending email from {0} to {1}".format(msg.from_email, msg.to))
             response = self.client.send_email(**data)
             responses.append(response)
 
         return responses
-

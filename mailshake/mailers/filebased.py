@@ -1,4 +1,3 @@
-# coding=utf-8
 """
     Mailer that writes messages to a file.
 """
@@ -6,14 +5,12 @@ import datetime
 import errno
 import os
 
-from .. import _compat as compat
 from .console import ToConsoleMailer
 
 
 class ToFileMailer(ToConsoleMailer):
-
     def __init__(self, path, multifile=True, *args, **kwargs):
-        assert isinstance(path, compat.string_types)
+        assert isinstance(path, str)
         path = os.path.abspath(path)
         if os.path.isfile(path):
             path = os.path.dirname(path)
@@ -23,8 +20,10 @@ class ToFileMailer(ToConsoleMailer):
             os.makedirs(path)
         except OSError as e:
             if e.errno != errno.EEXIST:
-                raise ValueError('Could not create directory for saving email'
-                                 ' messages: %s (%s)' % (path, e))
+                raise ValueError(
+                    "Could not create directory for saving email"
+                    " messages: %s (%s)" % (path, e)
+                )
 
         # Make sure that `path` exists and is writable.
         assert os.path.isdir(path)
@@ -37,7 +36,7 @@ class ToFileMailer(ToConsoleMailer):
         # Finally, call super().
         # Since we're using the console-based backend as a base,
         # force the stream to be None, so we don't default to stdout
-        kwargs['stream'] = None
+        kwargs["stream"] = None
         super(ToFileMailer, self).__init__(*args, **kwargs)
 
     def _get_filename(self):
@@ -53,7 +52,7 @@ class ToFileMailer(ToConsoleMailer):
 
     def open(self):
         if self.stream is None:
-            self.stream = open(self._get_filename(), 'a')
+            self.stream = open(self._get_filename(), "a")
             return True
         return self.multifile
 

@@ -1,17 +1,15 @@
-# coding=utf-8
 """
     SMTP mailer.
 """
 import smtplib
 import ssl
 
-
 from .base import BaseMailer
 from ..utils import DNS_NAME
 
 
 def chunker(seq, size):
-    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+    return (seq[pos : pos + size] for pos in range(0, len(seq), size))
 
 
 class SMTPMailer(BaseMailer):
@@ -24,9 +22,19 @@ class SMTPMailer(BaseMailer):
 
     """
 
-    def __init__(self, host='localhost', port=587, username=None, password=None,
-                 use_tls=None, use_ssl=None, timeout=None, max_recipients=200,
-                 *args, **kwargs):
+    def __init__(
+        self,
+        host="localhost",
+        port=587,
+        username=None,
+        password=None,
+        use_tls=None,
+        use_ssl=None,
+        timeout=None,
+        max_recipients=200,
+        *args,
+        **kwargs
+    ):
         self.host = host
         self.port = port
         self.username = username
@@ -51,9 +59,9 @@ class SMTPMailer(BaseMailer):
 
         # If local_hostname is not specified, socket.getfqdn() gets used.
         # For performance, we use the cached FQDN for local_hostname.
-        connection_params = {'local_hostname': DNS_NAME.get_fqdn()}
+        connection_params = {"local_hostname": DNS_NAME.get_fqdn()}
         if self.timeout is not None:
-            connection_params['timeout'] = self.timeout
+            connection_params["timeout"] = self.timeout
 
         try:
             self.connection = smtplib.SMTP(self.host, self.port, **connection_params)
