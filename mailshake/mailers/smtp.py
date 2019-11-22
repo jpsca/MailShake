@@ -33,7 +33,7 @@ class SMTPMailer(BaseMailer):
         timeout=None,
         max_recipients=200,
         *args,
-        **kwargs
+        **kwargs,
     ):
         self.host = host
         self.port = port

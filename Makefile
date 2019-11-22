@@ -24,13 +24,13 @@ clean-pyc:
 	find . -name '.pytest_cache' -exec rm -rf {} +
 
 test:
-	pytest -x mailshake tests
+	python -m pytest -x mailshake tests
 
 flake:
-	flake8 --config=setup.cfg mailshake tests
+	python -m flake8 --config=setup.cfg mailshake tests
 
 coverage:
-	pytest --cov-report html --cov mailshake mailshake tests
+	python -m pytest --cov-report html --cov mailshake mailshake tests
 
 install:
-	pip install -e .[dev]
+	python -m pip install -e .[dev]

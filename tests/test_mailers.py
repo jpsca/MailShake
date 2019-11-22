@@ -1,29 +1,9 @@
-import email
 from io import StringIO
-import os
-import shutil
 import sys
-import tempfile
 
 import pytest
 
-from ..mailshake import (
-    EmailMessage,
-    BaseMailer,
-    DummyMailer,
-    ToMemoryMailer,
-    ToConsoleMailer,
-    ToFileMailer,
-)
-
-
-def make_emails():
-    return [
-        EmailMessage(
-            "Subject", "Content #%s" % content, "from@example.com", "to@example.com"
-        )
-        for content in range(1, 5)
-    ]
+from mailshake import EmailMessage, BaseMailer, ToMemoryMailer, ToConsoleMailer
 
 
 def test_base_mailer():
@@ -34,17 +14,17 @@ def test_base_mailer():
         mailer.send()
 
 
-def test_dummy_mailer():
-    mailer = DummyMailer()
-    email1, email2, email3, email4 = make_emails()
-
-    assert mailer.send_messages(email1) == 1
-    assert mailer.send_messages(email2, email3, email4) == 3
-
-
 def test_to_memory_mailer():
     mailer = ToMemoryMailer()
-    email1, email2, email3, email4 = make_emails()
+    email1, email2, email3, email4 = [
+        EmailMessage(
+            "Subject",
+            f"The text of this email #{num}",
+            "from@example.com",
+            "to@example.com",
+        )
+        for num in range(1, 5)
+    ]
 
     assert mailer.send_messages(email1) == 1
     assert mailer.send_messages(email2, email3, email4) == 3
@@ -54,30 +34,38 @@ def test_to_memory_mailer():
 
 def test_to_console_mailer():
     __stdout = sys.stdout
-    s = sys.stdout = StringIO()
+    try:
+        stdout = sys.stdout = StringIO()
+        mailer = ToConsoleMailer()
+        mailer.send("Subject", "Content", "from@example.com", "to@example.com")
+        value = stdout.getvalue()
+    finally:
+        sys.stdout = __stdout
 
-    mailer = ToConsoleMailer()
-    mailer.send("Subject", "Content", "from@example.com", "to@example.com")
-
-    value = s.getvalue()
+    print(value)
     assert value.startswith(
-        'Content-Type: text/plain; charset="utf-8"'
-        "\nMIME-Version: 1.0"
-        "\nContent-Transfer-Encoding: 7bit"
-        "\nSubject: Subject"
-        "\nFrom: from@example.com"
-        "\nTo: to@example.com"
-        "\nDate: "
+        'Content-Type: text/plain; charset="utf-8"\n'
+        "Content-Transfer-Encoding: 7bit\n"
+        "MIME-Version: 1.0\n"
+        "Subject: Subject\n"
+        'From: "from@example.com"\n'
+        'To: "to@example.com"\n'
     )
     mailer.send_messages()
 
+
+def test_to_console_mailer_no_stream():
+    mailer = ToConsoleMailer()
     mailer.stream = ""
     with pytest.raises(Exception):
         mailer.send("Subject", "Content", "from@example.com", "to@example.com")
+
+
+def test_to_console_mailer_fail_silently():
+    mailer = ToConsoleMailer()
+    mailer.stream = ""
     mailer.fail_silently = True
     mailer.send("Subject", "Content", "from@example.com", "to@example.com")
-
-    sys.stdout = __stdout
 
 
 def test_to_console_stream_kwarg():
@@ -89,80 +77,10 @@ def test_to_console_stream_kwarg():
 
     value = s.getvalue()
     assert value.startswith(
-        'Content-Type: text/plain; charset="utf-8"'
-        "\nMIME-Version: 1.0"
-        "\nContent-Transfer-Encoding: 7bit"
-        "\nSubject: Subject"
-        "\nFrom: from@example.com"
-        "\nTo: to@example.com"
-        "\nDate: "
+        'Content-Type: text/plain; charset="utf-8"\n'
+        "Content-Transfer-Encoding: 7bit\n"
+        "MIME-Version: 1.0\n"
+        "Subject: Subject\n"
+        'From: "from@example.com"\n'
+        'To: "to@example.com"\n'
     )
-
-
-def test_to_file_mailer():
-    tmp_dir = tempfile.mkdtemp()
-    mailer = ToFileMailer(tmp_dir)
-
-    n = mailer.send("Subject", "Content", "from@example.com", "to@example.com")
-    assert n == 1
-    assert len(os.listdir(tmp_dir)) == 1
-
-    filepath = os.path.join(tmp_dir, os.listdir(tmp_dir)[0])
-    message = email.message_from_file(open(filepath))
-
-    assert message.get_content_type() == "text/plain"
-    assert message.get("subject") == "Subject"
-    assert message.get("from") == "from@example.com"
-    assert message.get("to") == "to@example.com"
-
-    shutil.rmtree(tmp_dir, True)
-
-    mailer = ToFileMailer(__file__)
-    assert mailer.path == os.path.dirname(__file__)
-
-
-def test_to_file_mailer_dir_creation():
-    tmp_dir = os.path.join(os.path.dirname(__file__), "qwertyuiop12345")
-    ToFileMailer(tmp_dir)
-
-    assert os.path.isdir(tmp_dir)
-
-    shutil.rmtree(tmp_dir, True)
-
-
-def test_to_file_mailer_unique_filename():
-    tmp_dir = tempfile.mkdtemp()
-    mailer1 = ToFileMailer(tmp_dir)
-    mailer2 = ToFileMailer(tmp_dir)
-    mailer1.send("Subject", "Content", "from@example.com", "to@example.com")
-    mailer2.send("Subject", "Content", "from@example.com", "to@example.com")
-
-    assert len(os.listdir(tmp_dir)) == 2
-
-    shutil.rmtree(tmp_dir, True)
-
-
-def test_to_file_mailer_one_file():
-    tmp_dir = tempfile.mkdtemp()
-    mailer = ToFileMailer(tmp_dir, multifile=False)
-    email1, email2, email3, email4 = make_emails()
-
-    assert mailer.send_messages(email1) == 1
-    assert mailer.send_messages(email2, email3) == 2
-    assert mailer.send_messages(email4) == 1
-    assert len(os.listdir(tmp_dir)) == 1
-
-    shutil.rmtree(tmp_dir, True)
-
-
-def test_to_file_mailer_multifile():
-    tmp_dir = tempfile.mkdtemp()
-    mailer = ToFileMailer(tmp_dir, multifile=True)
-    email1, email2, email3, email4 = make_emails()
-
-    assert mailer.send_messages(email1) == 1
-    assert mailer.send_messages(email2, email3) == 2
-    assert mailer.send_messages(email4) == 1
-    assert len(os.listdir(tmp_dir)) == 3
-
-    shutil.rmtree(tmp_dir, True)

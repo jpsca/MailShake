@@ -1,12 +1,12 @@
-import asyncore
 from email import message_from_bytes
-import smtpd
 from smtplib import SMTPException
+import asyncore
+import smtpd
 import threading
 
 import pytest
 
-from ..mailshake import EmailMessage, SMTPMailer
+from mailshake import EmailMessage, SMTPMailer
 
 
 def make_emails():
@@ -83,8 +83,8 @@ def test_sending():
     print(message)
     assert message.get_content_type() == "text/plain"
     assert message.get("subject") == "Subject-1"
-    assert message.get("from") == "from@example.com"
-    assert message.get("to") == "to@example.com"
+    assert message.get("from") == '"from@example.com"'
+    assert message.get("to") == '"to@example.com"'
 
 
 def test_sending_unicode():
@@ -93,7 +93,10 @@ def test_sending_unicode():
 
     mailer = SMTPMailer(host="127.0.0.1", port=SMTP_PORT, use_tls=False)
     email = EmailMessage(
-        "Olé", "Contenido en español", "from@example.com", "toБ@example.com"
+        subject="Olé",
+        text="Contenido en español",
+        from_email="from@example.com",
+        to="toБ@example.com",
     )
     assert mailer.send_messages(email)
     sink = smtp_server.sink

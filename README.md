@@ -11,16 +11,14 @@ These wrappers make sending email extra quick, easy to test email
 sending during development, and provides support for platforms that
 can't use SMTP.
 
-*Compatible with Python 3.5+*
+*Compatible with Python 3.6+*
 
 Mailers availiable:
 
 -   SMTPMailer
 -   AmazonSESMailer
 -   ToConsoleMailer (prints the emails in the console)
--   ToFileMailer (save the emails in a file)
 -   ToMemoryMailer (for testing)
--   DummyMailer (does nothing)
 
 Usage:
 

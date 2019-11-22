@@ -1,6 +1,6 @@
 import pytest
 
-from ..mailshake import EmailMessage
+from mailshake import EmailMessage
 
 
 def test_ascii():
@@ -8,31 +8,31 @@ def test_ascii():
     message = email.render()
 
     assert message["Subject"] == "Subject"
-    assert message.get_payload() == "Content"
-    assert message["From"] == "from@example.com"
-    assert message["To"] == "to@example.com"
+    assert message.get_payload() == "Content\n"
+    assert message["From"] == '"from@example.com"'
+    assert message["To"] == '"to@example.com"'
 
 
 def test_multiple_recipients():
     email = EmailMessage(
-        "Subject",
-        "Content",
-        "from@example.com",
-        ["to@example.com", "other@example.com"],
+        subject="Subject",
+        text="Content",
+        from_email="from@example.com",
+        to=["to@example.com", "other@example.com"],
     )
     message = email.render()
 
     assert message["Subject"] == "Subject"
-    assert message.get_payload() == "Content"
-    assert message["From"] == "from@example.com"
-    assert message["To"] == ("to@example.com, other@example.com")
+    assert message.get_payload() == "Content\n"
+    assert message["From"] == '"from@example.com"'
+    assert message["To"] == '"to@example.com", "other@example.com"'
 
 
 def test_cc():
     email = EmailMessage("Subject", "Content", "from@example.com", cc="cc@example.com")
     message = email.render()
 
-    assert message["Cc"] == "cc@example.com"
+    assert message["Cc"] == '"cc@example.com"'
     assert not message["To"]
     assert not message["Bcc"]
     assert email.get_recipients() == ["cc@example.com"]
@@ -40,15 +40,15 @@ def test_cc():
 
 def test_multiple_cc():
     email = EmailMessage(
-        "Subject",
-        "Content",
-        "from@example.com",
+        subject="Subject",
+        text="Content",
+        from_email="from@example.com",
         cc=["cc@example.com", "cc.other@example.com"],
     )
     message = email.render()
 
     print(message["Cc"])
-    assert message["Cc"] == "cc@example.com, cc.other@example.com"
+    assert message["Cc"] == '"cc@example.com", "cc.other@example.com"'
     assert not message["To"]
     assert not message["Bcc"]
     assert email.get_recipients() == ["cc@example.com", "cc.other@example.com"]
@@ -56,7 +56,10 @@ def test_multiple_cc():
 
 def test_bcc():
     email = EmailMessage(
-        "Subject", "Content", "from@example.com", bcc="bcc@example.com"
+        subject="Subject",
+        text="Content",
+        from_email="from@example.com",
+        bcc="bcc@example.com",
     )
     message = email.render()
 
@@ -68,9 +71,9 @@ def test_bcc():
 
 def test_multiple_bcc():
     email = EmailMessage(
-        "Subject",
-        "Content",
-        "from@example.com",
+        subject="Subject",
+        text="Content",
+        from_email="from@example.com",
         bcc=["bcc@example.com", "bcc.other@example.com"],
     )
     message = email.render()
@@ -81,40 +84,19 @@ def test_multiple_bcc():
     assert email.get_recipients() == ["bcc@example.com", "bcc.other@example.com"]
 
 
-def test_multiple_cc_and_to():
-    email = EmailMessage(
-        "Subject",
-        "Content",
-        "from@example.com",
-        to=["to@example.com", "other@example.com"],
-        cc=["cc@example.com", "cc.other@example.com"],
-    )
-    message = email.render()
-
-    assert message["To"] == "to@example.com, other@example.com"
-    assert message["Cc"] == "cc@example.com, cc.other@example.com"
-    assert not message["Bcc"]
-    assert email.get_recipients() == [
-        "to@example.com",
-        "other@example.com",
-        "cc@example.com",
-        "cc.other@example.com",
-    ]
-
-
 def test_multiple_to_cc_bcc():
     email = EmailMessage(
-        "Subject",
-        "Content",
-        "from@example.com",
+        subject="Subject",
+        text="Content",
+        from_email="from@example.com",
         to=["to@example.com", "other@example.com"],
         cc=["cc@example.com", "cc.other@example.com"],
         bcc=["bcc@example.com", "bcc.other@example.com"],
     )
     message = email.render()
 
-    assert message["To"] == "to@example.com, other@example.com"
-    assert message["Cc"] == "cc@example.com, cc.other@example.com"
+    assert message["To"] == '"to@example.com", "other@example.com"'
+    assert message["Cc"] == '"cc@example.com", "cc.other@example.com"'
     assert not message["Bcc"]  # as it should
     assert email.get_recipients() == [
         "to@example.com",
@@ -128,11 +110,14 @@ def test_multiple_to_cc_bcc():
 
 def test_replyto():
     email = EmailMessage(
-        "Subject", "Content", "from@example.com", reply_to="replyto@example.com"
+        subject="Subject",
+        text="Content",
+        from_email="from@example.com",
+        reply_to="replyto@example.com",
     )
     message = email.render()
 
-    assert message["Reply-To"] == "replyto@example.com"
+    assert message["Reply-To"] == '"replyto@example.com"'
     assert not message["To"]
     assert not message["Cc"]
     assert not message["Bcc"]  # as it should
@@ -141,46 +126,26 @@ def test_replyto():
 
 def test_multiple_replyto():
     email = EmailMessage(
-        "Subject",
-        "Content",
-        "from@example.com",
+        subject="Subject",
+        text="Content",
+        from_email="from@example.com",
         reply_to=["replyto@example.com", "replyto.other@example.com"],
     )
     message = email.render()
 
-    assert message["Reply-To"] == "replyto@example.com, replyto.other@example.com"
+    assert message["Reply-To"] == '"replyto@example.com", "replyto.other@example.com"'
     assert not message["To"]
     assert not message["Cc"]
     assert not message["Bcc"]  # as it should
     assert email.get_recipients() == []
 
 
-def test_recipients_as_tuple():
-    email = EmailMessage(
-        "Subject",
-        "Content",
-        "from@example.com",
-        to=("to@example.com", "other@example.com"),
-        cc=("cc@example.com", "cc.other@example.com"),
-        bcc=("bcc@example.com",),
-    )
-    message = email.render()
-
-    assert message["To"] == "to@example.com, other@example.com"
-    assert message["Cc"] == "cc@example.com, cc.other@example.com"
-    assert not message["Bcc"]  # as it should
-    assert email.get_recipients() == [
-        "to@example.com",
-        "other@example.com",
-        "cc@example.com",
-        "cc.other@example.com",
-        "bcc@example.com",
-    ]
-
-
 def test_header_injection():
     email = EmailMessage(
-        "Subject\nInjection Test", "Content", "from@example.com", "to@example.com"
+        subject="Subject\nInjection Test",
+        text="Content",
+        from_email="from@example.com",
+        to="to@example.com",
     )
     with pytest.raises(ValueError):
         email.render()
@@ -190,39 +155,32 @@ def test_message_header_overrides():
     """Specifying dates or message-ids in the extra headers overrides the
     default values.
     """
-    headers = {"date": "Fri, 09 Nov 2001 01:08:47 -0000", "Message-ID": "foo"}
     email = EmailMessage(
-        "Subject", "Content", "from@example.com", "to@example.com", headers=headers
+        subject="Subject",
+        text="Content",
+        from_email="from@example.com",
+        to="to@example.com",
+        headers={"date": "Fri, 09 Nov 2001 01:08:47 -0000", "Message-ID": "foo"},
     )
 
     email_as_string = email.as_string()
+    print(email_as_string)
     lines = [
-        'Content-Type: text/plain; charset="utf-8"' "\nMIME-Version: 1.0",
-        "\nContent-Transfer-Encoding: 7bit",
-        "\nSubject: Subject",
-        "\nFrom: from@example.com",
-        "\nTo: to@example.com",
-        "\ndate: Fri, 09 Nov 2001 01:08:47 -0000",
-        "\nMessage-ID: foo",
-        "\n\nContent",
+        'Content-Type: text/plain; charset="utf-8"\n'
+        "Content-Transfer-Encoding: 7bit\n",
+        "MIME-Version: 1.0\n",
+        "Subject: Subject\n",
+        'From: "from@example.com"\n',
+        'To: "to@example.com"\n',
+        "Cc:\n",
+        "Reply-To:\n",
+        "date: Fri, 09 Nov 2001 01:08:47 -0000\n",
+        "Message-ID: foo\n",
+        "\n",
+        "Content",
     ]
     for line in lines:
         assert line in email_as_string
-
-
-def test_from_header():
-    """Make sure we can manually set the From header.
-    """
-    email = EmailMessage(
-        "Subject",
-        "Content",
-        "bounce@example.com",
-        "to@example.com",
-        headers={"From": "from@example.com"},
-    )
-    message = email.render()
-
-    assert message["From"] == "from@example.com"
 
 
 def test_multiple_message_call():
@@ -230,74 +188,25 @@ def test_multiple_message_call():
     `EmailMessage.render()` again.
     """
     email = EmailMessage(
-        "Subject",
-        "Content",
-        "bounce@example.com",
-        "to@example.com",
-        headers={"From": "from@example.com"},
+        subject="Subject",
+        text="Content",
+        from_email="bounce@example.com",
+        to="to@example.com",
+        headers={"foo": "bar"},
     )
     message = email.render()
-    assert message["From"] == "from@example.com"
+    assert message["foo"] == "bar"
     message = email.render()
-    assert message["From"] == "from@example.com"
-
-
-def test_unicode_address_header():
-    """When a to/from/cc header contains unicode,
-    make sure the email addresses are parsed correctly (especially with
-    regards to commas).
-    """
-    email = EmailMessage(
-        "Subject",
-        "Content",
-        "from@example.com",
-        ['"Firstname Sürname" <to@example.com>', "other@example.com"],
-    )
-    message = email.render()
-    assert (
-        message["To"]
-        == "=?utf-8?q?Firstname_S=C3=BCrname?= <to@example.com>, other@example.com"
-    )
-
-    email = EmailMessage(
-        "Subject",
-        "Content",
-        "from@example.com",
-        ["other@example.com", '"Sürname, Firstname" <to@example.com>'],
-    )
-    message = email.render()
-    assert (
-        message["To"]
-        == "other@example.com, =?utf-8?q?S=C3=BCrname=2C_Firstname?= <to@example.com>"
-    )
-
-
-def test_unicode_headers():
-    headers = {
-        "Sender": '"Firstname Sürname" <sender@example.com>',
-        "Comments": "My Sürname is non-ASCII",
-    }
-    email = EmailMessage(
-        "Gżegżółka", "Content", "from@example.com", "to@example.com", headers=headers
-    )
-    message = email.render()
-
-    assert message["Subject"] == "=?utf-8?b?R8W8ZWfFvMOzxYJrYQ==?="
-    assert (
-        message["Sender"] == "=?utf-8?q?Firstname_S=C3=BCrname?= <sender@example.com>"
-    )
-    assert message["Comments"] == "=?utf-8?q?My_S=C3=BCrname_is_non-ASCII?="
+    assert message["foo"] == "bar"
 
 
 def test_html():
-    subject = "hello"
-    from_email = "from@example.com"
-    to = "to@example.com"
-    text_content = "This is an important message."
-    html_content = "<p>This is an <strong>important</strong> message.</p>"
-
     email = EmailMessage(
-        subject, text_content, from_email, to, html_content=html_content
+        subject="hello",
+        from_email="from@example.com",
+        to="to@example.com",
+        text="This is an important message.",
+        html="<p>This is an <strong>important</strong> message.</p>",
     )
     message = email.render()
 
@@ -308,89 +217,62 @@ def test_html():
     assert message.get_payload(1).get_content_type() == "text/html"
 
 
-def test_safe_mime_multipart():
-    """Make sure headers can be set with a different encoding than utf-8 in
-    SafeMIMEMultipart as well
-    """
-    subject = "Message from Firstname Sürname"
-    from_email = "from@example.com"
-    to = '"Sürname, Firstname" <to@example.com>'
-    text_content = "This is an important message."
-    html_content = "<p>This is an <strong>important</strong> message.</p>"
-    headers = {"Date": "Fri, 09 Nov 2001 01:08:47 -0000", "Message-ID": "foo"}
-
+def test_not_utf8():
     email = EmailMessage(
-        subject,
-        text_content,
-        from_email,
-        to,
-        html_content=html_content,
-        headers=headers,
-    )
-    email.encoding = "iso-8859-1"
-    email.render()
-
-
-def test_encoding():
-    """Encode body correctly with other encodings
-    than utf-8
-    """
-    email = EmailMessage(
-        "Subject",
-        "Firstname Sürname is a great guy.",
-        "from@example.com",
-        "other@example.com",
+        subject="Subject",
+        text="Firstname Sürname is a great guy.",
+        from_email="from@example.com",
+        to="other@example.com",
     )
     email.encoding = "iso-8859-1"
     message = email.render()
 
-    assert message.as_string().startswith(
-        'Content-Type: text/plain; charset="iso-8859-1"'
-        "\nMIME-Version: 1.0"
-        "\nContent-Transfer-Encoding: quoted-printable"
-        "\nSubject: Subject"
-        "\nFrom: from@example.com"
-        "\nTo: other@example.com"
+    as_string = message.as_string()
+    print(as_string)
+    assert as_string.startswith(
+        'Content-Type: text/plain; charset="utf-8"\n'
+        "Content-Transfer-Encoding: base64\n"
+        "MIME-Version: 1.0\n"
+        "Subject: Subject\n"
+        'From: "from@example.com"\n'
+        'To: "other@example.com"\n'
     )
-    assert message.get_payload() == "Firstname S=FCrname is a great guy."
+    assert message.get_payload() == "Firstname Sürname is a great guy.\n"
 
-    # Make sure MIME attachments also works correctly with other encodings than utf-8
-    text_content = "Firstname Sürname is a great guy."
-    html_content = "<p>Firstname Sürname is a <strong>great</strong> guy.</p>"
 
+def test_not_utf8_mime_attachments():
     email = EmailMessage(
-        "Subject",
-        text_content,
-        "from@example.com",
-        "to@example.com",
-        html_content=html_content,
+        subject="Subject",
+        text="Firstname Sürname is a great guy.",
+        html="<p>Firstname Sürname is a <strong>great</strong> guy.</p>",
+        from_email="from@example.com",
+        to="to@example.com",
     )
     email.encoding = "iso-8859-1"
     message = email.render()
 
-    assert message.get_payload(0).as_string() == (
-        'Content-Type: text/plain; charset="iso-8859-1"'
-        "\nMIME-Version: 1.0"
-        "\nContent-Transfer-Encoding: quoted-printable"
-        "\n\nFirstname S=FCrname is a great guy."
+    payload_as_string = message.get_payload(0).as_string()
+    print(payload_as_string)
+    assert payload_as_string.startswith(
+        'Content-Type: text/plain; charset="utf-8"\n'
+        "Content-Transfer-Encoding: base64\n"
     )
-    assert message.get_payload(1).as_string() == (
-        'Content-Type: text/html; charset="iso-8859-1"'
-        "\nMIME-Version: 1.0"
-        "\nContent-Transfer-Encoding: quoted-printable"
-        "\n\n<p>Firstname S=FCrname is a <strong>great</strong> guy.</p>"
+
+    payload_as_string = message.get_payload(1).as_string()
+    print(payload_as_string)
+    assert payload_as_string.startswith(
+        'Content-Type: text/html; charset="utf-8"\n'
+        "Content-Transfer-Encoding: base64\n"
     )
 
 
 def test_attachments():
-    subject = "hello"
-    from_email = "from@example.com"
-    to = "to@example.com"
-    text_content = "This is an important message."
-    html_content = "<p>This is an <strong>important</strong> message.</p>"
-
     email = EmailMessage(
-        subject, text_content, from_email, to, html_content=html_content
+        subject="hello",
+        from_email="from@example.com",
+        to="to@example.com",
+        text="This is an important message.",
+        html="<p>This is an <strong>important</strong> message.</p>",
     )
     email.attach("an attachment.pdf", "%PDF-1.4.%...", mimetype="application/pdf")
     message = email.render()
@@ -402,85 +284,25 @@ def test_attachments():
     assert message.get_payload(1).get_content_type() == "application/pdf"
 
 
-def test_dont_mangle_from_in_body():
-    """Make sure that EmailMessage doesn't mangle 'From' in message body."""
-    email = EmailMessage(
-        "Subject",
-        "From the future",
-        "bounce@example.com",
-        "to@example.com",
-        headers={"From": "from@example.com"},
-    )
-    str_email = email.as_bytes()
-    print(str_email)
-    assert b">From the future" not in str_email
-
-
 def test_dont_base64_encode():
-    """Shouldn't use Base64 encoding at all.
-    """
     email = EmailMessage(
-        "Subject",
-        "UTF-8 encoded body",
-        "bounce@example.com",
-        "to@example.com",
-        headers={"From": "from@example.com"},
+        subject="Subject",
+        text="UTF-8 encoded body",
+        from_email="bounce@example.com",
+        to="to@example.com",
     )
     assert "Content-Transfer-Encoding: base64" not in email.as_string()
 
 
-def test_7bit_no_quoted_printable():
-    """Shouldn't use quoted printable, should detect it can represent content
-    with 7 bit data.
-    """
-    email = EmailMessage(
-        "Subject",
-        "Body with only ASCII characters.",
-        "bounce@example.com",
-        "to@example.com",
-        headers={"From": "from@example.com"},
-    )
-    msg = email.as_string()
-
-    assert "Content-Transfer-Encoding: quoted-printable" not in msg
-    assert "Content-Transfer-Encoding: 7bit" in msg
-
-
-def test_8bit_no_quoted_printable():
-    """Shouldn't use quoted printable, should detect it can represent content
-    with 8 bit data.
-    """
-    email = EmailMessage(
-        "Subject",
-        "Body with latin characters: àáä.",
-        "bounce@example.com",
-        "to@example.com",
-        headers={"From": "from@example.com"},
-    )
-    msg = email.as_string()
-
-    assert "Content-Transfer-Encoding: quoted-printable" not in msg
-    assert "Content-Transfer-Encoding: 8bit" in msg
-
-    email = EmailMessage(
-        "Subject",
-        "Body with non latin characters: А Б В Г Д Е Ж Ѕ З И І К Л М Н О П.",
-        "bounce@example.com",
-        "to@example.com",
-        headers={"From": "from@example.com"},
-    )
-    msg = email.as_string()
-
-    assert "Content-Transfer-Encoding: quoted-printable" not in msg
-    assert "Content-Transfer-Encoding: 8bit" in msg
-
-
 def test_invalid_destination():
     dest = "toБ@example.com"
-    email = EmailMessage("Subject", "Content", "from@example.com", dest)
+    email = EmailMessage(
+        subject="Subject", text="Content", from_email="from@example.com", to=dest
+    )
     message = email.render()
 
     assert message["Subject"] == "Subject"
-    assert message.get_payload() == "Content"
-    assert message["From"] == "from@example.com"
+    assert message.get_payload() == "Content\n"
+    assert message["From"] == '"from@example.com"'
+    assert message["To"] != f'"#{dest}"'
     assert message["To"] != dest
