@@ -96,7 +96,7 @@ def test_sending_unicode():
         subject="Olé",
         text="Contenido en español",
         from_email="from@example.com",
-        to="toБ@example.com",
+        to="to@example.com",
     )
     assert mailer.send_messages(email)
     sink = smtp_server.sink

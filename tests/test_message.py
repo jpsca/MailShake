@@ -266,7 +266,7 @@ def test_not_utf8_mime_attachments():
     )
 
 
-def test_attachments():
+def test_attach_bytes():
     email = EmailMessage(
         subject="hello",
         from_email="from@example.com",
@@ -274,7 +274,7 @@ def test_attachments():
         text="This is an important message.",
         html="<p>This is an <strong>important</strong> message.</p>",
     )
-    email.attach("an attachment.pdf", "%PDF-1.4.%...", mimetype="application/pdf")
+    email.attach("an attachment.pdf", b"%PDF-1.4.%...", mimetype="application/pdf")
     message = email.render()
 
     assert message.is_multipart()
@@ -282,6 +282,24 @@ def test_attachments():
     assert message.get_default_type() == "text/plain"
     assert message.get_payload(0).get_content_type() == "multipart/alternative"
     assert message.get_payload(1).get_content_type() == "application/pdf"
+
+
+def test_attach_text():
+    email = EmailMessage(
+        subject="hello",
+        from_email="from@example.com",
+        to="to@example.com",
+        text="This is an important message.",
+        html="<p>This is an <strong>important</strong> message.</p>",
+    )
+    email.attach("mañana.txt", "Lorem ipsum", mimetype="text/plain")
+    message = email.render()
+
+    assert message.is_multipart()
+    assert message.get_content_type() == "multipart/mixed"
+    assert message.get_default_type() == "text/plain"
+    assert message.get_payload(0).get_content_type() == "multipart/alternative"
+    assert message.get_payload(1).get_content_type() == "text/plain"
 
 
 def test_dont_base64_encode():
@@ -294,15 +312,20 @@ def test_dont_base64_encode():
     assert "Content-Transfer-Encoding: base64" not in email.as_string()
 
 
-def test_invalid_destination():
-    dest = "toБ@example.com"
+def test_sanitize_addresses():
     email = EmailMessage(
-        subject="Subject", text="Content", from_email="from@example.com", to=dest
+        subject="Subject",
+        text="Content",
+        from_email="from@example.com",
+        to="toБ1@example.com",
+        cc="toБ2@example.com",
+        bcc="toБ3@example.com",
+        reply_to="toБ4@example.com",
     )
     message = email.render()
 
-    assert message["Subject"] == "Subject"
-    assert message.get_payload() == "Content\n"
     assert message["From"] == '"from@example.com"'
-    assert message["To"] != f'"#{dest}"'
-    assert message["To"] != dest
+    assert message["To"] != '"toБ1@example.com"'
+    assert message["Cc"] != ['"toБ2@example.com"']
+    assert message["Bcc"] != ['"toБ3@example.com"']
+    assert message["ReplyTo"] != '"toБ4@example.com"'

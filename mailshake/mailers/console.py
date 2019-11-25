@@ -1,6 +1,6 @@
 """
-    Mailer that writes messages to console instead of sending them. Ideal
-    for development.
+    Mailer that writes messages to console instead of sending them.
+    Convinient for development.
 """
 import sys
 import threading

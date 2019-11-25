@@ -8,7 +8,7 @@ import mimetypes
 
 import html2text
 
-from .utils import DNS_NAME
+from .utils import sanitize_address, to_str, DNS_NAME
 
 
 textify = html2text.HTML2Text()
@@ -16,16 +16,6 @@ textify = html2text.HTML2Text()
 # Default MIME type to use on attachments (if it is not explicitly given
 # and cannot be guessed).
 DEFAULT_ATTACHMENT_MIME_TYPE = "application/octet-stream"
-
-
-def to_str(s, encoding="utf-8", errors="strict"):
-    """Force a string to be the native text_type
-    """
-    if issubclass(type(s), str):
-        return s
-    if isinstance(s, bytes):
-        return str(s, encoding, errors)
-    return str(s)
 
 
 def format_addresses_list(values):
@@ -77,27 +67,23 @@ class EmailMessage(object):
 
         to = to or []
         if not isinstance(to, (list, tuple)):
-            self.to = [to]
-        else:
-            self.to = [to_str(_to) for _to in to]
+            to = [to]
+        self.to = [sanitize_address(_to, encoding) for _to in list(to)]
 
         cc = cc or []
         if not isinstance(cc, (list, tuple)):
-            self.cc = [cc]
-        else:
-            self.cc = [to_str(_cc) for _cc in cc]
+            cc = [cc]
+        self.cc = [sanitize_address(_cc, encoding) for _cc in list(cc)]
 
         bcc = bcc or []
         if not isinstance(bcc, (list, tuple)):
-            self.bcc = [bcc]
-        else:
-            self.bcc = [to_str(_bcc) for _bcc in bcc]
+            bcc = [bcc]
+        self.bcc = [sanitize_address(_bcc, encoding) for _bcc in list(bcc)]
 
         reply_to = reply_to or []
         if not isinstance(reply_to, (list, tuple)):
-            self.reply_to = [reply_to]
-        else:
-            self.reply_to = [to_str(rt) for rt in reply_to]
+            reply_to = [reply_to]
+        self.reply_to = [sanitize_address(_rt, encoding) for _rt in list(reply_to)]
 
         self.attachments = []
         if attachments:
@@ -190,8 +176,7 @@ class EmailMessage(object):
                 attachment.set_payload(content)
                 encoders.encode_base64(attachment)
                 attachment.add_header(
-                    "Content-Disposition",
-                    f'attachment; filename="{filename}"'
+                    "Content-Disposition", f'attachment; filename="{filename}"'
                 )
                 msg.attach(attachment)
         return msg
