@@ -1,0 +1,67 @@
+---
+nav:
+  - docs.md
+  - message.md
+  - smtp-mailer.md
+  - to-console-mailer.md
+  - to-memory-mailer.md
+
+site_name: Mailshake
+site_description: Simplify sending emails from your python app.
+site_author: Juan-Pablo Scaletti
+site_url: https://github.com/jpscaletti/mailshake
+
+repo_name: jpscaletti/mailshake
+repo_url: https://github.com/jpscaletti/mailshake
+edit_uri: ""
+
+theme:
+  name: material
+  custom_dir: material
+  logo: img/logo.png
+  palette:
+    primary: deep purple
+    accent: red
+
+extra_css:
+  - css/fonts.css
+  - css/colorful.css
+  # - css/monokai.css
+
+# Customization
+extra:
+  # manifest: "manifest.webmanifest"
+  social:
+    - type: globe
+      link: https://mailshake.jpscaletti.com
+    - type: github-alt
+      link: https://github.com/jpscaletti/mailshake
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - codehilite:
+      css_class: highlight
+      guess_lang: false
+  - smarty
+  - toc:
+      permalink: "#"
+      toc_depth: 4
+  - markdown.extensions.tables
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  # - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist
+  - pymdownx.tilde
+
+google_analytics:
+  - UA-XXXXXXXX-X
+  - auto

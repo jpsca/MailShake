@@ -1,0 +1,216 @@
+/* TODO: RESPONSIVE */
+*,
+::after,
+::before {
+	box-sizing: border-box
+}
+
+html {
+	line-height: 1.15;
+	-webkit-text-size-adjust: 100%;
+	-webkit-tap-highlight-color: transparent -webkit-text-size-adjust: 100%;
+}
+
+body {
+	color: #3c341e;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.5;
+	padding: 0 15px;
+	text-align: left;
+	/* Background pattern from Toptal Subtle Patterns */
+	/* by Myriam Lefebvre */
+	background: #fff url("../img/triangle-mosaic.png") repeat 0 0;
+}
+
+main, footer {
+	padding-left: 160px;
+	max-width: 800px;
+}
+
+main {
+	display: block;
+	margin: 95px auto 0;
+	padding-bottom: 20px;
+}
+
+img.logo {
+	border-style: none;
+	position: absolute;
+	left: -220px;
+	right:  auto;
+	top: -60px;
+	width: 240px;
+}
+
+main > header {
+	padding-bottom: 30px;
+	position: relative;
+}
+
+nav {
+	display: flex;
+	justify-content: flex-end;
+	margin: 0 -20px 30px 0;
+}
+
+nav a {
+	display: block;
+	padding: 5px 20px 0;
+	position: relative;
+	line-height: 1;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
+nav a:hover,
+nav a:focus,
+nav a:active {
+	text-decoration: none;
+}
+
+nav a:hover:after,
+nav a:focus:after,
+nav a:active:after {
+		content: "";
+		position: absolute;
+		left: 20px;
+		right: 20px;
+		bottom: -2px;
+		border-top: 1px solid red;
+}
+
+header hgroup h1 {
+	font-size: 72px;
+	line-height: 1.25;
+	margin: 0;
+	text-transform: none;
+	color: #000;
+}
+
+header hgroup h2 {
+	font-size: 24px;
+	color: #666;
+	margin: 0;
+	text-transform: none;
+	font-weight: normal;
+}
+
+section {
+	font-size: 16px;
+}
+
+section header h2 {
+	font-size: 16px;
+	text-transform: uppercase;
+	margin: 40px 0 5px;
+	color: #000;
+}
+
+footer {
+	display: block;
+	border-top: 2px solid #ddd;
+	padding-top: 5px;
+	padding-bottom: 30px;
+	font-size: 14px;
+	color: #999;
+	margin: 0 auto;
+}
+
+footer a {
+	color: #666;
+	text-decoration: underline;
+} 
+
+pre {
+	font-family: monospace, monospace;
+	font-size: 1em;
+}
+
+a {
+	background-color: transparent;
+	-webkit-text-decoration-skip: objects;
+	text-decoration: none;
+	color: #d74f4b;
+	transition: color .3s ease;
+}
+
+a:focus {
+	outline: thin dotted;
+	text-decoration: underline;
+	color: red;
+}
+
+a:active,
+a:hover {
+	outline: 0;
+	text-decoration: underline;
+	color: red;
+}
+
+div.highlight {
+	border: 2px solid #999;
+	background: #fff;
+	border-radius: 4px;
+	overflow: auto;
+}
+
+div.highlight > pre {
+	margin: 0;
+	padding: 15px 20px;
+	font-family: "Roboto Mono", Monaco, monospace;
+	font-size: 15px;
+}
+
+div.highlight .pl-c1 { color: #c92c2c; }
+div.highlight .pl-k { color: #1990b8; }
+div.highlight .pl-pds { color: #2f840a; }
+div.highlight .pl-s { color: #2f9c0a; }
+div.highlight .pl-v { color: #a67f59; }
+
+@media only screen and (max-width: 900px) {
+	main, footer {
+		padding-left: 0;
+	}
+
+	img.logo {
+		left: auto;
+		right: 0;
+		top: 40px;
+		width: 200px;
+	}
+
+	nav {
+		justify-content: center;
+		margin-right: 0;
+	}
+}
+
+@media only screen and (max-width: 790px) {
+	img.logo {	
+		width: 180px;
+		top: 0px;
+	}
+}
+
+@media only screen and (max-width: 670px) {
+	main {
+		margin-top: 10px;
+	}
+
+	img.logo {	
+		position: static;
+		display: block;
+		margin: 0 auto 20px;
+	}
+
+	header hgroup h1 {
+		font-size: 60px;
+		text-align: center;
+	}
+
+	header hgroup h2 {
+		font-size: 20px;
+		text-align: center;
+	}
+}

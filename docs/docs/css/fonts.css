@@ -1,0 +1,15 @@
+@font-face {
+	font-family: "FiraSans";
+	src: url("FiraSans-Regular.woff") format("woff");
+	font-weight: normal;
+}
+
+@font-face {
+	font-family: "FiraSans";
+	src: url("FiraSans-Bold.woff") format("woff");
+	font-weight: bold;
+}
+
+html, body, input {
+	font-family: "FiraSans", "Fira Sans", Roboto, sans-serif !important;
+}

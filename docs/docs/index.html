@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Mailshake — Simplify sending email from your Python app</title>
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+  <main>
+    <header class="site clear">
+      <img class="logo" src="img/mailshake-logo.png" alt="Mailshake logo">
+      <nav role="navigation">
+        <a href="docs/">Documentation</a></li>
+        <a href="https://github.com/jpscaletti/mailshake">Code</a></li>
+      </nav>
+      <hgroup>
+        <h1>Mailshake</h1>
+        <h2>Simplify sending email from your Python app</h2>
+      </hgroup>
+    </header>
+
+    <section>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">from</span> mailshake <span class="pl-k">import</span> SMTPMailer, EmailMessage
+
+mailer <span class="pl-k">=</span> SMTPMailer(<span class="pl-v">host</span><span class="pl-k">=</span><span class="pl-c1">HOST</span>, <span class="pl-v">username</span><span class="pl-k">=</span><span class="pl-c1">USER</span>, <span class="pl-v">password</span><span class="pl-k">=</span><span class="pl-c1">PASSW</span>)
+
+email <span class="pl-k">=</span> EmailMessage(
+    <span class="pl-s"><span class="pl-pds">"</span>Weekend getaway<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>Here's a photo of us from our trip.<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>from@example.com<span class="pl-pds">"</span></span>,
+    <span class="pl-v">to</span><span class="pl-k">=</span>[<span class="pl-s"><span class="pl-pds">'</span>mary@example.com<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>bob@example.com<span class="pl-pds">'</span></span>],
+)
+email.attach_file(<span class="pl-s"><span class="pl-pds">"</span>picture.jpg<span class="pl-pds">"</span></span>)
+mailer.send(email)</pre></div>
+      <!--p>
+        <a href="" target="_blank" rel="noopener noreferrer">See similar code, sans Mailshake</a>.
+      </p-->
+    </section>
+
+    <section>
+    <header>
+      <h2>Mailshake is an elegant and simple email library for Python:</h2>
+    </header>
+    <p>Available mailers:</p>
+    <ul>
+      <li><code>SMTPMailer</code></li>
+      <li><code>AmazonSESMailer</code></li>
+      <li><code>ToConsoleMailer</code>, prints the emails in the console, for development.</li>
+      <li><code>ToMemoryMailer</code>, perfect for testing.</li>
+    </ul>
+    </section>
+
+    <section>
+    <header>
+      <h2>Online tests</h2>
+    </header>
+    <p>Each time we change our codebase, a test runs so you can see <a href="https://travis-ci.org/jpscaletti/mailshake" target="_blank" rel="noopener noreferrer">the results here</a>.</p>
+    </section>
+
+    <section>
+    <header>
+      <h2>Contribute</h2>
+    </header>
+      <p>Mailshake is an open-source project, thus, welcoming contributions. <br/>If you are interested you may:
+    <ul>
+      <li>Fork Mailshake <a href="https://github.com/jpscaletti/mailshake" target="_blank" rel="noopener noreferrer">on GitHub</a> and submit pull-request with your modifications.</li>
+      <li>Ask a question or report a bug in the <a href="https://github.com/jpscaletti/mailshake/issues" target="_blank" rel="noopener noreferrer">Issues page</a>.</li>
+    </ul>
+    </section>
+
+    <section>
+    <header>
+      <h2>License</h2>
+    </header>
+    <p>Mailshake is distributed under a <a href="https://github.com/jpscaletti/mailshake/blob/master/LICENSE" target="_blank">Apache Software License</a>.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      © 2012–2019 <a href="https://jpscaletti.com/" target="_blank" rel="noopener noreferrer">Juan-Pablo Scaletti</a>.</br>
+      Documentation licensed by <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution-ShareAlike 4.0 International</a>.
+    </p>
+    <p>
+      Logo by <a href="http://mello.pe/" target="_blank" rel="noopener noreferrer">Alfonso Mello</a>.</span>
+    </p>
+  </footer>
+</body>
+</html>

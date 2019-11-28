@@ -1,19 +1,16 @@
-![Mailshake logo](https://raw.github.com/jpscaletti/mailshake/master/docs/static/images/mailshake@2x.png)
-
-# Mailshake
+![Mailshake logo](https://raw.github.com/jpscaletti/mailshake/master/docs/static/images/mailshake.png)
 
 [![Build Status](https://travis-ci.org/jpscaletti/MailShake.svg?branch=master)](https://travis-ci.org/jpscaletti/MailShake)
 
-Although Python makes sending email relatively easy via the smtplib
-module, this library provides a couple of light wrappers over it.
+> Documentation: https://mailshake.jpscaletti.com
 
-These wrappers make sending email extra quick, easy to test email
+Sending emails with Python 3 is a little easier than before, but still a mess. 
+
+This library makes it way easier to send emails, test the
 sending during development, and provides support for platforms that
-can't use SMTP.
+don't use SMTP like Amazon SES.
 
-*Compatible with Python 3.6+*
-
-Mailers availiable:
+Mailers available:
 
 -   SMTPMailer
 -   AmazonSESMailer
