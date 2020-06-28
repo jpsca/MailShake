@@ -1,8 +1,8 @@
-![Mailshake logo](https://raw.github.com/jpscaletti/mailshake/master/docs/static/images/mailshake@2x.png)
+![Mailshake logo](https://raw.github.com/jpsca/mailshake/master/docs/static/images/mailshake@2x.png)
 
 # Mailshake
 
-[![Build Status](https://travis-ci.org/jpscaletti/MailShake.svg?branch=master)](https://travis-ci.org/jpscaletti/MailShake)
+[![Build Status](https://travis-ci.org/jpsca/MailShake.svg?branch=master)](https://travis-ci.org/jpsca/MailShake)
 
 Although Python makes sending email relatively easy via the smtplib
 module, this library provides a couple of light wrappers over it.

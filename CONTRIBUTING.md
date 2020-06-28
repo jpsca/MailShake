@@ -7,7 +7,7 @@ You can contribute in many ways:
 
 ### Report Bugs
 
-Report bugs at <https://github.com/jpscaletti/mailshake/issues>.
+Report bugs at <https://github.com/jpsca/mailshake/issues>.
 
 If you are reporting a bug, please include:
 
@@ -35,7 +35,7 @@ such.
 ### Submit Feedback
 
 The best way to send feedback is to file an issue at
-<https://github.com/jpscaletti/mailshake/issues>.
+<https://github.com/jpsca/mailshake/issues>.
 
 If you are proposing a feature:
 
@@ -52,7 +52,7 @@ Ready to contribute? Here's how to set up the project for local development.
 2.  Clone your fork locally:
 
 ```bash
-git clone git@github.com:jpscaletti/mailshake.git
+git clone git@github.com:jpsca/mailshake.git
 ```
 
 3.  Install your local copy into a virtualenv. 
