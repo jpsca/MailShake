@@ -108,7 +108,7 @@ def test_notls():
 
 def test_wrong_host():
     with pytest.raises(Exception):
-        mailer = SMTPMailer(host="123", port=SMTP_PORT, use_tls=False)
+        mailer = SMTPMailer(host="123", port=SMTP_PORT, use_tls=False, timeout=0.5)
         mailer.open()
 
 
@@ -124,7 +124,7 @@ def test_fail_silently():
     )
     mailer.open()
 
-    mailer = SMTPMailer(host="123", port=SMTP_PORT, use_tls=False, fail_silently=True)
+    mailer = SMTPMailer(host="123", port=SMTP_PORT, use_tls=False, fail_silently=True, timeout=0.5)
     mailer.open()
 
     mailer = SMTPMailer(host="127.0.0.1", port=3000, use_tls=False, fail_silently=True)
