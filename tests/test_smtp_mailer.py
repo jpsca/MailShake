@@ -43,6 +43,7 @@ class FakeSMTPServer(smtpd.SMTPServer):
         # timeout parameter is important, otherwise code will block 30 seconds after
         # the SMTP channel has been closed
         self.thread = threading.Thread(target=asyncore.loop, kwargs={"timeout": 0.1})
+        self.thread.daemon = True
         self.thread.start()
 
     def stop(self):
@@ -50,7 +51,7 @@ class FakeSMTPServer(smtpd.SMTPServer):
         self.close()
         # now it is save to wait for the thread to finish,
         # i.e. for asyncore.loop() to exit
-        self.thread.join()
+        self.thread.join(timeout=0.5)
 
 
 def setup_module():
