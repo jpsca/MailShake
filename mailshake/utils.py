@@ -127,11 +127,4 @@ def to_str(s, encoding="utf-8", errors="strict"):
     """
     if isinstance(s, str):
         return s
-
-    if isinstance(s, str):
-        return s.decode(encoding, errors)
-
-    if isinstance(s, bytes):
-        return str(s, encoding, errors)
-
-    return str(s)
+    return str(s, encoding, errors)
