@@ -278,9 +278,9 @@ def test_unicode_address_header():
         ["other@example.com", "à" * 50 + " <to@example.com>"],
     )
     message = email.render()
-    assert (
-        message["To"]
-        == "other@example.com, " + "=?utf-8?b?" + "w6DDoMOg" * 16 + "w6DDoA==?= <to@example.com>"
+    assert message["To"] == (
+        "other@example.com, "
+        + "=?utf-8?b?" + "w6DDoMOg" * 16 + "w6DDoA==?= <to@example.com>"
     )
 
 
