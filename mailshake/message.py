@@ -12,7 +12,7 @@ import os
 
 import html2text
 
-from .utils import sanitize_address, forbid_multi_line_headers, make_msgid, to_str
+from .utils import encode_address, forbid_multi_line_headers, make_msgid, to_str
 
 
 textify = html2text.HTML2Text()
@@ -132,23 +132,21 @@ class EmailMessage(object):
         to = to or []
         if isinstance(to, str):
             to = [to]
-        self.to = [sanitize_address(to_str(_to), encoding) for _to in list(to)]
+        self.to = [encode_address(addr, self.encoding) for addr in to]
         cc = cc or []
         if isinstance(cc, str):
             cc = [cc]
-        self.cc = [sanitize_address(to_str(_cc), encoding) for _cc in list(cc)]
+        self.cc = [encode_address(addr, self.encoding) for addr in cc]
 
         bcc = bcc or []
         if isinstance(bcc, str):
             bcc = [bcc]
-        self.bcc = [sanitize_address(to_str(_bcc), encoding) for _bcc in list(bcc)]
+        self.bcc = [encode_address(addr, self.encoding) for addr in bcc]
 
         reply_to = reply_to or []
         if isinstance(reply_to, str):
             reply_to = [reply_to]
-        self.reply_to = [
-            sanitize_address(to_str(rt), encoding) for rt in list(reply_to)
-        ]
+        self.reply_to = [encode_address(addr, self.encoding) for addr in reply_to]
 
         self.from_email = from_email
         self.subject = subject
