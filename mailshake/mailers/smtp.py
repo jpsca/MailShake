@@ -1,6 +1,7 @@
 """
     SMTP mailer.
 """
+import email.policy
 import smtplib
 import ssl
 
@@ -140,12 +141,13 @@ class SMTPMailer(BaseMailer):
                 message.to = list(to_set.intersection(group_set))
                 message.cc = list(cc_set.intersection(group_set))
                 message.bcc = list(bcc_set.intersection(group_set))
+                rendered_msg = message.render().as_bytes(policy=email.policy.SMTP)
                 try:
-                    self.connection.sendmail(from_email, group, message.as_bytes())
+                    self.connection.sendmail(from_email, group, rendered_msg)
                 except smtplib.SMTPServerDisconnected:
                     self.connection = None
                     self.open()
-                    self.connection.sendmail(from_email, group, message.as_bytes())
+                    self.connection.sendmail(from_email, group, rendered_msg)
         except Exception:
             if not self.fail_silently:
                 raise

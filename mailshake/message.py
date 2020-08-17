@@ -1,12 +1,12 @@
 import email
-from email import generator, message_from_string
+from email import message_from_string
 from email.message import Message
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.message import MIMEMessage
-from email.utils import formatdate
-from io import StringIO, BytesIO
+import email.policy
+from email.utils import formatdate, getaddresses
 import mimetypes
 import os
 
@@ -16,6 +16,23 @@ from .utils import encode_address, forbid_multi_line_headers, make_msgid, to_str
 
 
 textify = html2text.HTML2Text()
+
+# Header names that contain structured address data (RFC #5322)
+ADDRESS_HEADERS = set(
+    [
+        "from",
+        "sender",
+        "reply-to",
+        "to",
+        "cc",
+        "bcc",
+        "resent-from",
+        "resent-sender",
+        "resent-to",
+        "resent-cc",
+        "resent-bcc",
+    ]
+)
 
 # Don't BASE64-encode UTF-8 messages
 email.charset.add_charset("utf-8", email.charset.SHORTEST, None, "utf-8")
@@ -27,66 +44,44 @@ utf8_charset.body_encoding = None  # Python defaults to BASE64
 DEFAULT_ATTACHMENT_MIME_TYPE = "application/octet-stream"
 
 
-class MIMEMixin(object):
-    def as_string(self, unixfrom=False):
-        """Return the entire formatted message as a string.
-        Optional `unixfrom' when True, means include the Unix From_ envelope
-        header.
-        This overrides the default as_string() implementation to not mangle
-        lines that begin with 'From '. See bug #13433 for details.
-        """
-        fp = StringIO()
-        g = generator.Generator(fp, mangle_from_=False)
-        g.flatten(self, unixfrom=unixfrom)
-        return fp.getvalue()
+class SafeMIMEMixin(object):
+    encoding = 'ascii'
 
-    def as_bytes(self, unixfrom=False):
-        """Return the entire formatted message as bytes.
-        Optional `unixfrom' when True, means include the Unix From_ envelope
-        header.
-        This overrides the default as_bytes() implementation to not mangle
-        lines that begin with 'From '.
-        """
-        fp = BytesIO()
-        g = generator.BytesGenerator(fp, mangle_from_=False)
-        g.flatten(self, unixfrom=unixfrom)
-        return fp.getvalue()
+    def __init__(self, *args, **kw):
+        self.charset = email.charset.Charset(self.encoding)
+        super().__init__(*args, **kw)
 
-
-class SafeMIMEMessage(MIMEMessage, MIMEMixin):
     def __setitem__(self, name, val):
-        # message/rfc822 attachments must be ASCII
-        name, val = forbid_multi_line_headers(name, val, "ascii")
+        name, val = to_str(name, self.encoding), to_str(val, self.encoding)
+        forbid_multi_line_headers(name, val)
+        try:
+            val.encode('ascii')
+        except UnicodeEncodeError:
+            if name.lower() in ADDRESS_HEADERS:
+                val = ", ".join(
+                    encode_address(addr, self.charset) for addr in getaddresses((val,))
+                )
+            else:
+                val = self.charset.header_encode(val)
         MIMEMessage.__setitem__(self, name, val)
 
 
-class SafeMIMEText(MIMEText, MIMEMixin):
+class SafeMIMEMessage(SafeMIMEMixin, MIMEMessage):
+    pass
+
+
+class SafeMIMEText(SafeMIMEMixin, MIMEText):
     def __init__(self, text, subtype, charset):
         self.encoding = charset
-        MIMEText.__init__(self, text, subtype, charset)
-
-    def __setitem__(self, name, val):
-        name, val = forbid_multi_line_headers(name, val, self.encoding)
-        MIMEText.__setitem__(self, name, val)
+        super().__init__(text, subtype, charset)
 
 
-class SafeMIMEMultipart(MIMEMultipart, MIMEMixin):
+class SafeMIMEMultipart(SafeMIMEMixin, MIMEMultipart):
     def __init__(
         self, _subtype="mixed", boundary=None, _subparts=None, encoding=None, **_params
     ):
         self.encoding = encoding
-        MIMEMultipart.__init__(self, _subtype, boundary, _subparts, **_params)
-        try:
-            import email.policy
-
-            # https://docs.python.org/3/library/email.policy.html
-            self.policy = email.policy.default
-        except ImportError:
-            pass
-
-    def __setitem__(self, name, val):
-        name, val = forbid_multi_line_headers(name, val, self.encoding)
-        MIMEMultipart.__setitem__(self, name, val)
+        super().__init__(_subtype, boundary, _subparts, **_params)
 
 
 class EmailMessage(object):
@@ -192,10 +187,10 @@ class EmailMessage(object):
         return msg
 
     def as_string(self, unixfrom=False):
-        return self.render().as_string(unixfrom)
+        return self.render().as_string(unixfrom, policy=email.policy.default)
 
     def as_bytes(self, unixfrom=False):
-        return self.render().as_bytes(unixfrom)
+        return self.render().as_bytes(unixfrom, policy=email.policy.default)
 
     def get_recipients(self):
         """Returns a list of all recipients of the email (includes direct

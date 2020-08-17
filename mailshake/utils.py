@@ -4,8 +4,7 @@ The original code was BSD licensed (see LICENSE)
 """
 from datetime import datetime
 from email.charset import Charset
-from email.header import Header
-from email.utils import formataddr, getaddresses, parseaddr
+from email.utils import formataddr, parseaddr
 import os
 import socket
 import threading
@@ -113,46 +112,14 @@ def make_msgid(idstring=None, host_id=DNS_NAME):
     )
 
 
-# Header names that contain structured address data (RFC #5322)
-ADDRESS_HEADERS = set(
-    [
-        "from",
-        "sender",
-        "reply-to",
-        "to",
-        "cc",
-        "bcc",
-        "resent-from",
-        "resent-sender",
-        "resent-to",
-        "resent-cc",
-        "resent-bcc",
-    ]
-)
-
-
-def forbid_multi_line_headers(name, val, encoding="utf-8"):
+def forbid_multi_line_headers(name, val):
     """Forbids multi-line headers, to prevent header injection.
     """
-    val = to_str(val)
     if "\n" in val or "\r" in val:
         raise ValueError(
             "Header values can't contain newlines "
             "(got {val} for header {name})".format(val=val, name=name)
         )
-    try:
-        val.encode("ascii")
-    except UnicodeEncodeError:
-        if name.lower() in ADDRESS_HEADERS:
-            val = ", ".join(
-                [encode_address(addr, encoding) for addr in getaddresses((val,))]
-            )
-        else:
-            val = Header(val, encoding).encode()
-    else:
-        if name.lower() == "subject":
-            val = Header(val).encode()
-    return str(name), val
 
 
 def to_str(s, encoding="utf-8", errors="strict"):
