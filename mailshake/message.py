@@ -35,9 +35,9 @@ ADDRESS_HEADERS = set(
 )
 
 # Don't BASE64-encode UTF-8 messages
-email.charset.add_charset("utf-8", email.charset.SHORTEST, None, "utf-8")
 utf8_charset = email.charset.Charset("utf-8")
 utf8_charset.body_encoding = None  # Python defaults to BASE64
+email.charset.add_charset("utf-8", email.charset.SHORTEST, None, "utf-8")
 
 # Default MIME type to use on attachments (if it is not explicitly given
 # and cannot be guessed).
