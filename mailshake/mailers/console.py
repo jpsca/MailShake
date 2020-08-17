@@ -16,12 +16,7 @@ class ToConsoleMailer(BaseMailer):
 
     def write_message(self, message):
         msg = message.render()
-        msg_data = msg.as_bytes()
-        _charset = msg.get_charset()
-        if _charset and _charset.get_output_charset:
-            _charset = _charset.get_output_charset()
-        charset = _charset or "utf-8"
-        msg_data = msg_data.decode(charset)
+        msg_data = msg.as_string()
         self.stream.write("%s\n" % msg_data)
         self.stream.write("-" * 79)
         self.stream.write("\n")
