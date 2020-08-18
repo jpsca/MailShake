@@ -102,21 +102,24 @@ def test_sending_unicode():
 
 
 def test_notls():
+    mailer = SMTPMailer(host="127.0.0.1", port=SMTP_PORT, use_tls=True)
     with pytest.raises(SMTPException):
-        mailer = SMTPMailer(host="127.0.0.1", port=SMTP_PORT, use_tls=True)
         mailer.open()
+    mailer.close()
 
 
 def test_wrong_host():
+    mailer = SMTPMailer(host="123", port=SMTP_PORT, use_tls=False, timeout=0.5)
     with pytest.raises(Exception):
-        mailer = SMTPMailer(host="123", port=SMTP_PORT, use_tls=False, timeout=0.5)
         mailer.open()
+    mailer.close()
 
 
 def test_wrong_port():
+    mailer = SMTPMailer(host="127.0.0.1", port=3000, use_tls=False)
     with pytest.raises(Exception):
-        mailer = SMTPMailer(host="127.0.0.1", port=3000, use_tls=False)
         mailer.open()
+    mailer.close()
 
 
 def test_fail_silently():
@@ -124,14 +127,17 @@ def test_fail_silently():
         host="127.0.0.1", port=SMTP_PORT, use_tls=True, fail_silently=True
     )
     mailer.open()
+    mailer.close()
 
     mailer = SMTPMailer(
         host="123", port=SMTP_PORT, use_tls=False, fail_silently=True, timeout=0.5
     )
     mailer.open()
+    mailer.close()
 
     mailer = SMTPMailer(host="127.0.0.1", port=3000, use_tls=False, fail_silently=True)
     mailer.open()
+    mailer.close()
 
 
 def test_batch_too_many_recipients():

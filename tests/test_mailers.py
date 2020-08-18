@@ -108,7 +108,8 @@ def test_to_file_mailer():
     assert len(os.listdir(tmp_dir)) == 1
 
     filepath = os.path.join(tmp_dir, os.listdir(tmp_dir)[0])
-    message = email.message_from_file(open(filepath))
+    with open(filepath) as fd:
+        message = email.message_from_file(fd)
 
     assert message.get_content_type() == "text/plain"
     assert message.get("subject") == "Subject"
