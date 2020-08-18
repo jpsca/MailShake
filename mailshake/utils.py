@@ -2,13 +2,13 @@
 Adapted from Django (http://djangoproject.com).
 The original code was BSD licensed (see LICENSE)
 """
+from datetime import datetime
 from email.charset import Charset
 from email.header import Header
 from email.utils import formataddr, getaddresses, parseaddr
 import os
 import socket
 import threading
-import time
 import warnings
 
 
@@ -92,8 +92,7 @@ def make_msgid(idstring=None, host_id=DNS_NAME):
     By default the name returned by `socket.getfqdn()` is used, however it isn't
     guaranteed to be globally unique.
     """
-    timeval = time.time()
-    utcdate = time.strftime("%Y%m%d%H%M%S", time.gmtime(timeval))
+    utcdate = datetime.utcnow().strftime("%Y%m%d%H%M%S")
     try:
         pid = os.getpid()
     except AttributeError:
