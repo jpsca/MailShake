@@ -79,13 +79,18 @@ def sanitize_address(addr, encoding):
 thread_lock = threading.Lock()
 
 
-def make_msgid(idstring=None):
+def make_msgid(idstring=None, host_id=DNS_NAME):
     """Returns a string suitable for RFC 2822 compliant Message-ID, e.g:
 
     <20200818100350.554898.7effb56bc790.44@mail.example.com>
 
-    Optional idstring if given is a string used to strengthen the
-    uniqueness of the message id.
+    The optional idstring argument is used to strengthen the uniqueness of the
+    message id.
+
+    The optional host_id argument allows you to specify the last part of the
+    message ID. It must be a globally unique ID, preferably a valid domain name.
+    By default the name returned by `socket.getfqdn()` is used, however it isn't
+    guaranteed to be globally unique.
     """
     timeval = time.time()
     utcdate = time.strftime("%Y%m%d%H%M%S", time.gmtime(timeval))
@@ -104,9 +109,8 @@ def make_msgid(idstring=None):
         idstring = ""
     else:
         idstring = "." + idstring
-    idhost = DNS_NAME
     return "<{}.{}.{:x}.{}{}@{}>".format(
-        utcdate, pid, function_id, sequence_id, idstring, idhost
+        utcdate, pid, function_id, sequence_id, idstring, host_id
     )
 
 
