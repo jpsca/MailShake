@@ -1,3 +1,5 @@
+import re
+
 import pytest
 
 from ..mailshake import EmailMessage
@@ -496,3 +498,14 @@ def test_invalid_destination():
     assert message.get_payload() == "Content"
     assert message["From"] == "from@example.com"
     assert message["To"] != dest
+
+
+def test_message_id():
+    message_id_re = re.compile(r"^<[0-9]{14}\.[0-9]+\.[0-9]+@[a-z\-]+(\.[a-z\-]+)*>$")
+    email1 = EmailMessage("Subject 1", "Content", "from@example.com", "to@example.com")
+    msg1 = email1.render()
+    assert message_id_re.match(msg1["Message-ID"])
+    email2 = EmailMessage("Subject 2", "Content", "from@example.com", "to@example.com")
+    msg2 = email2.render()
+    assert message_id_re.match(msg2["Message-ID"])
+    assert msg2["Message-ID"] != msg1["Message-ID"]
