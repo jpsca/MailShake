@@ -6,8 +6,8 @@ from email.charset import Charset
 from email.header import Header
 from email.utils import formataddr, getaddresses, parseaddr
 import os
-import random
 import socket
+import threading
 import time
 import warnings
 
@@ -76,10 +76,13 @@ def sanitize_address(addr, encoding):
     return encode_address(addr, encoding)
 
 
+thread_lock = threading.Lock()
+
+
 def make_msgid(idstring=None):
     """Returns a string suitable for RFC 2822 compliant Message-ID, e.g:
 
-    <20020201195627.33539.96671@nightshade.la.mastaler.com>
+    <20200818100350.554898.7effb56bc790.44@mail.example.com>
 
     Optional idstring if given is a string used to strengthen the
     uniqueness of the message id.
@@ -90,14 +93,21 @@ def make_msgid(idstring=None):
         pid = os.getpid()
     except AttributeError:
         pid = 1
-    randint = random.randrange(100000)
+    function_id = id(make_msgid)
+    with thread_lock:
+        try:
+            make_msgid.counter += 1
+        except AttributeError:
+            make_msgid.counter = 1
+        sequence_id = make_msgid.counter
     if idstring is None:
         idstring = ""
     else:
         idstring = "." + idstring
     idhost = DNS_NAME
-    msgid = "<{}.{}.{}{}@{}>".format(utcdate, pid, randint, idstring, idhost)
-    return msgid
+    return "<{}.{}.{:x}.{}{}@{}>".format(
+        utcdate, pid, function_id, sequence_id, idstring, idhost
+    )
 
 
 # Header names that contain structured address data (RFC #5322)

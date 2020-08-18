@@ -501,7 +501,9 @@ def test_invalid_destination():
 
 
 def test_message_id():
-    message_id_re = re.compile(r"^<[0-9]{14}\.[0-9]+\.[0-9]+@[a-z\-]+(\.[a-z\-]+)*>$")
+    message_id_re = re.compile(
+        r"^<[0-9]{14}\.[0-9]+\.[0-9a-f]+\.[0-9]+@[a-z\-]+(\.[a-z\-]+)*>$"
+    )
     email1 = EmailMessage("Subject 1", "Content", "from@example.com", "to@example.com")
     msg1 = email1.render()
     assert message_id_re.match(msg1["Message-ID"])
