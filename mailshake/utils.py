@@ -11,7 +11,7 @@ import threading
 import warnings
 
 
-class CachedDnsName(object):
+class CachedDnsName:
     """Cache the hostname, but do it lazily: socket.getfqdn() can take a
     couple of seconds, which slows down the restart of the server.
     """

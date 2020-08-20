@@ -1,7 +1,7 @@
 from ..message import EmailMessage
 
 
-class BaseMailer(object):
+class BaseMailer:
     """Base class for mailers implementations.
 
     Subclasses must at least overwrite send_messages().

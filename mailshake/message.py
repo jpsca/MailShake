@@ -44,7 +44,7 @@ email.charset.add_charset("utf-8", email.charset.SHORTEST, None, "utf-8")
 DEFAULT_ATTACHMENT_MIME_TYPE = "application/octet-stream"
 
 
-class SafeMIMEMixin(object):
+class SafeMIMEMixin:
     encoding = 'ascii'
 
     def __init__(self, *args, **kw):
@@ -84,7 +84,7 @@ class SafeMIMEMultipart(SafeMIMEMixin, MIMEMultipart):
         super().__init__(_subtype, boundary, _subparts, **_params)
 
 
-class EmailMessage(object):
+class EmailMessage:
 
     """A container for email information.
     """
