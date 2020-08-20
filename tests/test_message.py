@@ -271,6 +271,18 @@ def test_unicode_address_header():
         == "other@example.com, =?utf-8?q?S=C3=BCrname=2C_Firstname?= <to@example.com>"
     )
 
+    email = EmailMessage(
+        "Subject",
+        "Content",
+        "from@example.com",
+        ["other@example.com", "à" * 50 + " <to@example.com>"],
+    )
+    message = email.render()
+    assert (
+        message["To"]
+        == "other@example.com, " + "=?utf-8?b?" + "w6DDoMOg" * 16 + "w6DDoA==?= <to@example.com>"
+    )
+
 
 def test_unicode_headers():
     headers = {
