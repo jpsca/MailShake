@@ -96,7 +96,7 @@ def make_msgid(idstring=None):
     else:
         idstring = "." + idstring
     idhost = DNS_NAME
-    msgid = "<{}.{}.{}@{}>".format(utcdate, pid, randint, idstring, idhost)
+    msgid = "<{}.{}.{}{}@{}>".format(utcdate, pid, randint, idstring, idhost)
     return msgid
 
 
