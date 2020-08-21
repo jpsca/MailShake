@@ -2,13 +2,13 @@
 Adapted from Django (http://djangoproject.com).
 The original code was BSD licensed (see LICENSE)
 """
+from datetime import datetime
 from email.charset import Charset
 from email.header import Header
 from email.utils import formataddr, getaddresses, parseaddr
 import os
-import random
 import socket
-import time
+import threading
 import warnings
 
 
@@ -76,28 +76,41 @@ def sanitize_address(addr, encoding):
     return encode_address(addr, encoding)
 
 
-def make_msgid(idstring=None):
+thread_lock = threading.Lock()
+
+
+def make_msgid(idstring=None, host_id=DNS_NAME):
     """Returns a string suitable for RFC 2822 compliant Message-ID, e.g:
 
-    <20020201195627.33539.96671@nightshade.la.mastaler.com>
+    <20200818100350.554898.7effb56bc790.44@mail.example.com>
 
-    Optional idstring if given is a string used to strengthen the
-    uniqueness of the message id.
+    The optional idstring argument is used to strengthen the uniqueness of the
+    message id.
+
+    The optional host_id argument allows you to specify the last part of the
+    message ID. It must be a globally unique ID, preferably a valid domain name.
+    By default the name returned by `socket.getfqdn()` is used, however it isn't
+    guaranteed to be globally unique.
     """
-    timeval = time.time()
-    utcdate = time.strftime("%Y%m%d%H%M%S", time.gmtime(timeval))
+    utcdate = datetime.utcnow().strftime("%Y%m%d%H%M%S")
     try:
         pid = os.getpid()
     except AttributeError:
         pid = 1
-    randint = random.randrange(100000)
+    function_id = id(make_msgid)
+    with thread_lock:
+        try:
+            make_msgid.counter += 1
+        except AttributeError:
+            make_msgid.counter = 1
+        sequence_id = make_msgid.counter
     if idstring is None:
         idstring = ""
     else:
         idstring = "." + idstring
-    idhost = DNS_NAME
-    msgid = "<{}.{}.{}{}@{}>".format(utcdate, pid, randint, idstring, idhost)
-    return msgid
+    return "<{}.{}.{:x}.{}{}@{}>".format(
+        utcdate, pid, function_id, sequence_id, idstring, host_id
+    )
 
 
 # Header names that contain structured address data (RFC #5322)
