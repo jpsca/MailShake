@@ -198,18 +198,21 @@ def test_message_header_overrides():
     )
 
     email_as_string = email.as_string()
-    lines = [
-        'Content-Type: text/plain; charset="utf-8"' "\nMIME-Version: 1.0",
-        "\nContent-Transfer-Encoding: 7bit",
-        "\nSubject: Subject",
-        "\nFrom: from@example.com",
-        "\nTo: to@example.com",
-        "\ndate: Fri, 09 Nov 2001 01:08:47 -0000",
-        "\nMessage-ID: foo",
-        "\n\nContent",
+    assert email_as_string.startswith(
+        'Content-Type: text/plain; charset="utf-8"\nMIME-Version: 1.0\n'
+    )
+    headers = [
+        "Content-Transfer-Encoding: 7bit",
+        "Subject: Subject",
+        "From: from@example.com",
+        "To: to@example.com",
+        "date: Fri, 09 Nov 2001 01:08:47 -0000",
+        "Message-ID: foo",
     ]
-    for line in lines:
-        assert line in email_as_string
+    lines = set(email_as_string.split("\n"))
+    for header in headers:
+        assert header in lines
+    assert email_as_string.endswith("\n\nContent")
 
 
 def test_from_header():
