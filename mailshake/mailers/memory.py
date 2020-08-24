@@ -1,5 +1,4 @@
-"""
-    Mailer for testing.
+"""Mailer for testing.
 """
 from .base import BaseMailer
 

@@ -1,3 +1,0 @@
-include *.py *.txt *.md Makefile
-recursive-include mailshake *
-recursive-include tests *

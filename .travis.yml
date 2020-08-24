@@ -1,16 +1,11 @@
+dist: bionic
 language: python
+python:
+  - "3.6"
+  - "3.7"
+  - "3.8"
 
-matrix:
-  include:
-    - python: 3.6
-    - python: 3.7
-      dist: xenial
-      sudo: true
-
-before_install:
-  - pip install -U pip
-
-install:
-  - pip install .[testing]
-
-script: pytest -x mailshake tests
+before_install: pip install -U pip coveralls
+install: pip install .[test]
+script: pytest -Wd --cov mailshake --cov tests .
+after_success: coveralls

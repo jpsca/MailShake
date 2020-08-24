@@ -1,5 +1,5 @@
 """
-    Dummy mailer that does nothing.
+Dummy mailer that does nothing.
 """
 from .base import BaseMailer
 

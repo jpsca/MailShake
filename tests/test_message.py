@@ -285,7 +285,9 @@ def test_unicode_address_header():
     message = email.render()
     assert message["To"] == (
         "other@example.com, "
-        + "=?utf-8?b?" + "w6DDoMOg" * 16 + "w6DDoA==?= <to@example.com>"
+        + "=?utf-8?b?"
+        + "w6DDoMOg" * 16
+        + "w6DDoA==?= <to@example.com>"
     )
 
 
@@ -505,7 +507,8 @@ def test_invalid_destination():
 
 def test_message_id():
     message_id_re = re.compile(
-        r"^<[0-9]{14}\.[0-9]+\.[0-9a-f]+\.[0-9]+@[a-z\-]+(\.[a-z\-]+)*>$"
+        r"^<[0-9]{14}\.[0-9]+\.[0-9a-f]+\.[0-9]+@[a-z\-]+(\.[a-z\-]+)*>$",
+        re.IGNORECASE
     )
     email1 = EmailMessage("Subject 1", "Content", "from@example.com", "to@example.com")
     msg1 = email1.render()

@@ -45,7 +45,7 @@ DEFAULT_ATTACHMENT_MIME_TYPE = "application/octet-stream"
 
 
 class SafeMIMEMixin:
-    encoding = 'ascii'
+    encoding = "ascii"
 
     def __init__(self, *args, **kw):
         self.charset = email.charset.Charset(self.encoding)
@@ -55,7 +55,7 @@ class SafeMIMEMixin:
         name, val = to_str(name, self.encoding), to_str(val, self.encoding)
         forbid_multi_line_headers(name, val)
         try:
-            val.encode('ascii')
+            val.encode("ascii")
         except UnicodeEncodeError:
             if name.lower() in ADDRESS_HEADERS:
                 val = ", ".join(

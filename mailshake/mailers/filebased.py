@@ -1,5 +1,5 @@
 """
-    Mailer that writes messages to a file.
+Mailer that writes messages to a file.
 """
 import datetime
 import errno

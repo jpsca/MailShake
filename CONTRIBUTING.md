@@ -55,13 +55,12 @@ Ready to contribute? Here's how to set up the project for local development.
 git clone git@github.com:jpsca/mailshake.git
 ```
 
-3.  Install your local copy into a virtualenv. 
+3.  Install your local copy into a virtualenv.
 
 ```bash
 python -m virtualenv .venv
 source .venv/bin/activate
-pip install -e .
-pip install .[testing]
+make install
 ```
 
 5.  Create a branch for local development:
@@ -75,8 +74,8 @@ Now you can make your changes locally.
 6.  When you're done making changes, check that your changes pass all tests
 
 ```bash
-pytest -x .
-flake8 .
+make test
+make lint
 ```
 
 To have multiple Python versions on the same machine for running `tox`, I recommend
@@ -105,4 +104,4 @@ Before you submit a pull request, check that it meets these guidelines:
 
 To run a subset of tests:
 
-    $  pytest tests/the-tests-file.py
+    $  pytest -Wd -x tests/the-tests-file.py

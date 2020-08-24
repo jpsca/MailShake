@@ -2,7 +2,7 @@
 
 # Mailshake
 
-[![Build Status](https://travis-ci.org/jpsca/MailShake.svg?branch=master)](https://travis-ci.org/jpsca/MailShake)
+[![Build Status](https://travis-ci.org/jpsca/mailshake.svg?branch=master)](https://travis-ci.org/jpsca/mailshake)
 
 Although Python makes sending email relatively easy via the smtplib
 module, this library provides a couple of light wrappers over it.
@@ -10,8 +10,6 @@ module, this library provides a couple of light wrappers over it.
 These wrappers make sending email extra quick, easy to test email
 sending during development, and provides support for platforms that
 can't use SMTP.
-
-*Compatible with Python 3.5+*
 
 Mailers availiable:
 
@@ -57,3 +55,14 @@ messages.append(email_msg)
 
 mailer.send_messages(*messages)
 ```
+
+## Install for development
+
+First, create an activate a virtualenv. eg:
+
+```bash
+python -m virtualenv .venv
+source .venv/bin/activate
+```
+
+Then run `pip install -e .[dev]` or `make install`. This will install the library in editable mode and all its dependencies.

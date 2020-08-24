@@ -31,7 +31,8 @@ DNS_NAME = CachedDnsName()
 def split_addr(addr, encoding):
     warnings.warn(
         "the split_addr function is deprecated, you can use a simple "
-        "`.rsplit('@', 1)` instead", DeprecationWarning
+        "`.rsplit('@', 1)` instead",
+        DeprecationWarning,
     )
     return encode_address(addr, encoding).rsplit("@", 1)
 
@@ -70,7 +71,7 @@ def encode_address(addr, charset):
 def sanitize_address(addr, encoding):
     warnings.warn(
         "the sanitize_address function has been replaced by encode_address",
-        DeprecationWarning
+        DeprecationWarning,
     )
     return encode_address(addr, encoding)
 

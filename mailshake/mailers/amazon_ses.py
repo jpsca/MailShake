@@ -1,5 +1,5 @@
 """
-    Mailer for Amazon Simple Email Server.
+Mailer for Amazon Simple Email Server.
 """
 import logging
 
