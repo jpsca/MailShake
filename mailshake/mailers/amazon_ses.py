@@ -51,15 +51,15 @@ class AmazonSESMailer(BaseMailer):
             if msg.bcc:
                 destination_data["BccAddresses"] = msg.bcc
 
-            body_data = {"Text": {"Data": msg.text, "Charset": "utf8"}}
+            body_data = {"Text": {"Data": msg.text, "Charset": "UTF-8"}}
             if msg.html:
-                body_data["Html"] = {"Data": msg.html, "Charset": "utf8"}
+                body_data["Html"] = {"Data": msg.html, "Charset": "UTF-8"}
 
             data = {
                 "Source": msg.from_email,
                 "Destination": destination_data,
                 "Message": {
-                    "Subject": {"Data": msg.subject, "Charset": "utf8"},
+                    "Subject": {"Data": msg.subject, "Charset": "UTF-8"},
                     "Body": body_data,
                 },
             }
