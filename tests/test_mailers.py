@@ -81,8 +81,7 @@ def test_to_console_mailer():
 
 
 def test_to_console_stream_kwarg():
-    """Test that the console backend can be pointed at an arbitrary stream.
-    """
+    """Test that the console backend can be pointed at an arbitrary stream."""
     s = StringIO()
     mailer = ToConsoleMailer(stream=s)
     mailer.send("Subject", "Content", "from@example.com", "to@example.com")

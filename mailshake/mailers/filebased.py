@@ -40,8 +40,7 @@ class ToFileMailer(ToConsoleMailer):
         super(ToFileMailer, self).__init__(*args, **kwargs)
 
     def _get_filename(self):
-        """Return a unique file name.
-        """
+        """Return a unique file name."""
         if self._fname is None:
             now = datetime.datetime.now()
             timestamp = now.strftime("%Y%m%d-%H%M%S")

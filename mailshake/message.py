@@ -86,8 +86,7 @@ class SafeMIMEMultipart(SafeMIMEMixin, MIMEMultipart):
 
 class EmailMessage:
 
-    """A container for email information.
-    """
+    """A container for email information."""
 
     content_subtype = "plain"
     mixed_subtype = "mixed"

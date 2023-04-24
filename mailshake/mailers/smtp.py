@@ -87,8 +87,7 @@ class SMTPMailer(BaseMailer):
         return True
 
     def close(self):
-        """Closes the connection to the email server.
-        """
+        """Closes the connection to the email server."""
         if self.connection is None:
             return
         try:
@@ -125,8 +124,7 @@ class SMTPMailer(BaseMailer):
         return num_sent
 
     def _send(self, message):
-        """A helper method that does the actual sending.
-        """
+        """A helper method that does the actual sending."""
         recipients = message.get_recipients()
         if not recipients:
             return False

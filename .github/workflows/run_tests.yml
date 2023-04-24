@@ -1,0 +1,41 @@
+name: run_tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+      - name: "Installs dependencies"
+        run: |
+          pip install -U pip wheel
+          pip install -e .[test]
+      - name: "Run linter"
+        run: make lint
+  tests:
+    name: tests
+    strategy:
+      matrix:
+        python: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+      - name: "Installs dependencies"
+        run: |
+          pip install -U pip wheel
+          pip install -e .[test]
+      - name: "Run tests"
+        run: make test
