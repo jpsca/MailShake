@@ -503,14 +503,22 @@ def test_invalid_destination():
     assert message["To"] != dest
 
 
+rx_message_id = re.compile(
+    r"^<[0-9]{14}\.[0-9]+\.[0-9a-f]+\.[0-9]+@[a-z0-9\-]+(\.[a-z0-9\-]+)*>$",
+    re.IGNORECASE,
+)
+
+
 def test_message_id():
-    message_id_re = re.compile(
-        r"^<[0-9]{14}\.[0-9]+\.[0-9a-f]+\.[0-9]+@[a-z\-]+(\.[a-z\-]+)*>$", re.IGNORECASE
-    )
     email1 = EmailMessage("Subject 1", "Content", "from@example.com", "to@example.com")
     msg1 = email1.render()
-    assert message_id_re.match(msg1["Message-ID"])
+    mid1 = msg1["Message-ID"]
+    print("Message-ID 1:", mid1)
+    assert rx_message_id.match(mid1)
+
     email2 = EmailMessage("Subject 2", "Content", "from@example.com", "to@example.com")
     msg2 = email2.render()
-    assert message_id_re.match(msg2["Message-ID"])
-    assert msg2["Message-ID"] != msg1["Message-ID"]
+    mid2 = msg2["Message-ID"]
+    print("Message-ID 2:", mid2)
+    assert rx_message_id.match(mid2)
+    assert mid2 != mid1
