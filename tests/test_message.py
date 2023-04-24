@@ -216,8 +216,7 @@ def test_message_header_overrides():
 
 
 def test_from_header():
-    """Make sure we can manually set the From header.
-    """
+    """Make sure we can manually set the From header."""
     email = EmailMessage(
         "Subject",
         "Content",
@@ -436,8 +435,7 @@ def test_dont_mangle_from_in_body():
 
 
 def test_dont_base64_encode():
-    """Shouldn't use Base64 encoding at all.
-    """
+    """Shouldn't use Base64 encoding at all."""
     email = EmailMessage(
         "Subject",
         "UTF-8 encoded body",
@@ -507,8 +505,7 @@ def test_invalid_destination():
 
 def test_message_id():
     message_id_re = re.compile(
-        r"^<[0-9]{14}\.[0-9]+\.[0-9a-f]+\.[0-9]+@[a-z\-]+(\.[a-z\-]+)*>$",
-        re.IGNORECASE
+        r"^<[0-9]{14}\.[0-9]+\.[0-9a-f]+\.[0-9]+@[a-z\-]+(\.[a-z\-]+)*>$", re.IGNORECASE
     )
     email1 = EmailMessage("Subject 1", "Content", "from@example.com", "to@example.com")
     msg1 = email1.render()

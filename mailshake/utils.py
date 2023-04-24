@@ -114,8 +114,7 @@ def make_msgid(idstring=None, host_id=DNS_NAME):
 
 
 def forbid_multi_line_headers(name, val):
-    """Forbids multi-line headers, to prevent header injection.
-    """
+    """Forbids multi-line headers, to prevent header injection."""
     if "\n" in val or "\r" in val:
         raise ValueError(
             "Header values can't contain newlines "
@@ -124,8 +123,7 @@ def forbid_multi_line_headers(name, val):
 
 
 def to_str(s, encoding="utf-8", errors="strict"):
-    """Force a string to be the native text_type
-    """
+    """Force a string to be the native text_type"""
     if isinstance(s, str):
         return s
     return str(s, encoding, errors)

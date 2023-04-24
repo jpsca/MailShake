@@ -20,8 +20,7 @@ class AmazonSESMailer(BaseMailer):
         *args,
         **kwargs
     ):
-        """
-        """
+        """ """
         import boto3
 
         self.client = boto3.client(
@@ -35,8 +34,7 @@ class AmazonSESMailer(BaseMailer):
         super(AmazonSESMailer, self).__init__(*args, **kwargs)
 
     def send_messages(self, *email_messages):
-        """
-        """
+        """ """
         logger = logging.getLogger("mailshake:AmazonSESMailer")
         if not email_messages:
             logger.debug("No email messages to send")
